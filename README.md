@@ -55,7 +55,7 @@ Available themes:
 1. Clone the repo:
 
 ```bash
-git clone https://github.com/SivanZeroX/super-tab-out.git
+git clone https://github.com/SivanCola/super-tab-out.git
 cd super-tab-out
 ```
 
@@ -160,7 +160,6 @@ The extension currently requests:
 | Permission | Why it is needed |
 | --- | --- |
 | `tabs` | Read, focus, close, and group open tabs |
-| `activeTab` | Work with the currently active tab context |
 | `storage` | Persist saved tabs, privacy settings, and view mode |
 | `tabGroups` | Read and render Chrome Tab Groups |
 

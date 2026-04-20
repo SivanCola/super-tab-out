@@ -55,7 +55,7 @@ Super Tab Out 会替换默认新标签页，把你打开的标签集中成一个
 1. 克隆仓库：
 
 ```bash
-git clone https://github.com/SivanZeroX/super-tab-out.git
+git clone https://github.com/SivanCola/super-tab-out.git
 cd super-tab-out
 ```
 
@@ -160,7 +160,6 @@ Super Tab Out 采用本地优先设计。
 | 权限 | 用途 |
 | --- | --- |
 | `tabs` | 读取、聚焦、关闭和分组打开的标签 |
-| `activeTab` | 处理当前活动标签上下文 |
 | `storage` | 保存稍后再看、隐私设置和视图模式 |
 | `tabGroups` | 读取并展示 Chrome Tab Groups |
 

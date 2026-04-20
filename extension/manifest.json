@@ -3,7 +3,7 @@
   "name": "Super Tab Out",
   "version": "1.0.0",
   "description": "A customized new-tab dashboard that groups your open tabs by domain, with theme switching. Based on Tab Out by Zara Zhang (MIT).",
-  "permissions": ["tabs", "activeTab", "storage", "tabGroups"],
+  "permissions": ["tabs", "storage", "tabGroups"],
   "chrome_url_overrides": { "newtab": "index.html" },
   "background": { "service_worker": "background.js" },
   "action": {
