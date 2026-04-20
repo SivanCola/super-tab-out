@@ -1,0 +1,1976 @@
+/* ============================================================
+   Tab Mission Control — Dashboard Styles
+   Extracted directly from mockup.html — do not modify unless
+   also updating the mockup. This is the approved design.
+   ============================================================ */
+
+/* System font stacks — replace the old Google Fonts dependency.
+   --font-sans replaces 'DM Sans'; --font-serif replaces 'Newsreader'. */
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+}
+
+:root,
+[data-theme="warm"] {
+  --ink: #1a1613;
+  --paper: #f8f5f0;
+  --warm-gray: #e8e2da;
+  --muted: #9a918a;
+  --accent-amber: #c8713a;
+  --accent-sage: #5a7a62;
+  --accent-slate: #5a6b7a;
+  --accent-rose: #b35a5a;
+  --status-active: #3d7a4a;
+  --status-cooling: #b8892e;
+  --status-abandoned: #b35a5a;
+  --card-bg: #fffdf9;
+  --shadow: rgba(26, 22, 19, 0.06);
+}
+
+/* Midnight — dark cosmic palette */
+[data-theme="midnight"] {
+  --ink: #e6e6fa;
+  --paper: #14101f;
+  --warm-gray: #332849;
+  --muted: #a490c2;
+  --accent-amber: #e0a75a;
+  --accent-sage: #7ab39a;
+  --accent-slate: #8a9cc2;
+  --accent-rose: #d88a8a;
+  --status-active: #5fc98a;
+  --status-cooling: #e0b958;
+  --status-abandoned: #e07a7a;
+  --card-bg: #2b1e3e;
+  --shadow: rgba(0, 0, 0, 0.4);
+}
+
+/* Arctic — cool, crisp steel-blue palette */
+[data-theme="arctic"] {
+  --ink: #1e3a5f;
+  --paper: #eef4fb;
+  --warm-gray: #c6d6e8;
+  --muted: #6b8299;
+  --accent-amber: #d67a2e;
+  --accent-sage: #4a8a94;
+  --accent-slate: #4a6fa5;
+  --accent-rose: #c25a7a;
+  --status-active: #3d8a95;
+  --status-cooling: #c89a45;
+  --status-abandoned: #b35a6a;
+  --card-bg: #ffffff;
+  --shadow: rgba(74, 111, 165, 0.10);
+}
+
+/* Forest — grounded earth tones */
+[data-theme="forest"] {
+  --ink: #1e2f1c;
+  --paper: #f3f1e8;
+  --warm-gray: #d8d4c5;
+  --muted: #7d8471;
+  --accent-amber: #c48a3a;
+  --accent-sage: #2d4a2b;
+  --accent-slate: #556b5c;
+  --accent-rose: #a0553c;
+  --status-active: #4a7c3a;
+  --status-cooling: #b88838;
+  --status-abandoned: #a0553c;
+  --card-bg: #fbfaf4;
+  --shadow: rgba(45, 74, 43, 0.08);
+}
+
+[data-theme="graphite"] {
+  --ink: #f6f1e3;
+  --paper: #111316;
+  --warm-gray: #2b3035;
+  --muted: #9ca3ad;
+  --accent-amber: #d4af37;
+  --accent-sage: #64b6ac;
+  --accent-slate: #7aa2d6;
+  --accent-rose: #d7837f;
+  --status-active: #64b6ac;
+  --status-cooling: #d4af37;
+  --status-abandoned: #d7837f;
+  --card-bg: #1b1f24;
+  --shadow: rgba(0, 0, 0, 0.42);
+}
+
+[data-theme="coast"] {
+  --ink: #17343f;
+  --paper: #f7fbf8;
+  --warm-gray: #c9e3df;
+  --muted: #6d8585;
+  --accent-amber: #f07167;
+  --accent-sage: #008f9c;
+  --accent-slate: #335c67;
+  --accent-rose: #c85d58;
+  --status-active: #008f9c;
+  --status-cooling: #e09f3e;
+  --status-abandoned: #c85d58;
+  --card-bg: #fffdfa;
+  --shadow: rgba(0, 129, 167, 0.10);
+}
+
+[data-theme="plum"] {
+  --ink: #33233a;
+  --paper: #f7f1f4;
+  --warm-gray: #dfd3dc;
+  --muted: #897a89;
+  --accent-amber: #c98649;
+  --accent-sage: #7a9b82;
+  --accent-slate: #66507e;
+  --accent-rose: #b75d75;
+  --status-active: #6f9778;
+  --status-cooling: #c98649;
+  --status-abandoned: #b75d75;
+  --card-bg: #fffafd;
+  --shadow: rgba(51, 35, 58, 0.08);
+}
+
+[data-theme="matcha"] {
+  --ink: #243225;
+  --paper: #f6f7e8;
+  --warm-gray: #d7dec0;
+  --muted: #7a8468;
+  --accent-amber: #d99b4e;
+  --accent-sage: #66835b;
+  --accent-slate: #506d74;
+  --accent-rose: #b96d5a;
+  --status-active: #66835b;
+  --status-cooling: #d99b4e;
+  --status-abandoned: #b96d5a;
+  --card-bg: #fffdf0;
+  --shadow: rgba(102, 131, 91, 0.10);
+}
+
+[data-theme="ember"] {
+  --ink: #f5eee8;
+  --paper: #171b20;
+  --warm-gray: #333942;
+  --muted: #a7a09a;
+  --accent-amber: #ff9f1c;
+  --accent-sage: #2ec4b6;
+  --accent-slate: #8ecae6;
+  --accent-rose: #ef6f6c;
+  --status-active: #2ec4b6;
+  --status-cooling: #ffbf69;
+  --status-abandoned: #ef6f6c;
+  --card-bg: #222832;
+  --shadow: rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="lavender"] {
+  --ink: #2f3145;
+  --paper: #f5f3fb;
+  --warm-gray: #d9d6ea;
+  --muted: #7b7890;
+  --accent-amber: #d8915f;
+  --accent-sage: #6fae9b;
+  --accent-slate: #6e82b7;
+  --accent-rose: #c9789f;
+  --status-active: #6fae9b;
+  --status-cooling: #d8915f;
+  --status-abandoned: #c9789f;
+  --card-bg: #fffefe;
+  --shadow: rgba(83, 78, 116, 0.09);
+}
+
+/* ---- Theme switcher (top-right of header) ---- */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.language-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--card-bg);
+  border: 1px solid var(--warm-gray);
+}
+
+.language-btn {
+  min-width: 28px;
+  height: 24px;
+  border: none;
+  border-radius: 999px;
+  padding: 0 8px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.language-btn:hover {
+  color: var(--ink);
+}
+
+.language-btn[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.language-btn:active {
+  transform: scale(0.96);
+}
+
+.theme-picker {
+  position: relative;
+}
+
+.theme-current-btn {
+  height: 32px;
+  min-width: 126px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 4px 10px 4px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--warm-gray);
+  background: var(--card-bg);
+  color: var(--ink);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  box-shadow: 0 2px 10px var(--shadow);
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.theme-current-btn:hover,
+.theme-menu-open .theme-current-btn {
+  border-color: var(--accent-amber);
+  box-shadow: 0 4px 18px var(--shadow);
+}
+
+.theme-current-btn:active {
+  transform: scale(0.98);
+}
+
+.theme-current-label {
+  max-width: 92px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.theme-current-chevron {
+  width: 12px;
+  height: 12px;
+  color: var(--muted);
+  transition: transform 0.16s ease;
+}
+
+.theme-menu-open .theme-current-chevron {
+  transform: rotate(180deg);
+}
+
+.theme-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 30;
+  width: 254px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid var(--warm-gray);
+  background: color-mix(in srgb, var(--card-bg) 94%, transparent);
+  box-shadow: 0 18px 50px var(--shadow);
+  backdrop-filter: blur(14px);
+  opacity: 0;
+  transform: translateY(-6px) scale(0.98);
+  pointer-events: none;
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+.theme-menu-open .theme-menu {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.theme-option {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  text-align: left;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.theme-option:hover {
+  background: color-mix(in srgb, var(--accent-slate) 10%, transparent);
+}
+
+.theme-option[aria-pressed="true"] {
+  border-color: var(--accent-amber);
+  background: color-mix(in srgb, var(--accent-amber) 12%, transparent);
+}
+
+.theme-option-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.theme-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.theme-swatch-active {
+  width: 22px;
+  height: 22px;
+}
+
+.theme-swatch-warm     { background: conic-gradient(#c8713a 0 28%, #5a7a62 28% 50%, #fffdf9 50% 75%, #f8f5f0 75%); }
+.theme-swatch-midnight { background: conic-gradient(#e0a75a 0 25%, #7ab39a 25% 45%, #2b1e3e 45% 72%, #14101f 72%); }
+.theme-swatch-arctic   { background: conic-gradient(#d67a2e 0 24%, #4a8a94 24% 48%, #ffffff 48% 74%, #eef4fb 74%); }
+.theme-swatch-forest   { background: conic-gradient(#c48a3a 0 24%, #2d4a2b 24% 52%, #fbfaf4 52% 75%, #f3f1e8 75%); }
+.theme-swatch-graphite { background: conic-gradient(#d4af37 0 23%, #64b6ac 23% 45%, #1b1f24 45% 72%, #111316 72%); }
+.theme-swatch-coast    { background: conic-gradient(#f07167 0 24%, #008f9c 24% 48%, #fffdfa 48% 74%, #f7fbf8 74%); }
+.theme-swatch-plum     { background: conic-gradient(#b75d75 0 24%, #7a9b82 24% 48%, #fffafd 48% 74%, #f7f1f4 74%); }
+.theme-swatch-matcha   { background: conic-gradient(#d99b4e 0 24%, #66835b 24% 48%, #fffdf0 48% 74%, #f6f7e8 74%); }
+.theme-swatch-ember    { background: conic-gradient(#ff9f1c 0 24%, #2ec4b6 24% 48%, #222832 48% 74%, #171b20 74%); }
+.theme-swatch-lavender { background: conic-gradient(#c9789f 0 24%, #6fae9b 24% 48%, #fffefe 48% 74%, #f5f3fb 74%); }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Subtle paper texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 48px 32px 80px;
+}
+
+/* When the saved-for-later sidebar is open, expand the container
+   so the tab grid still has room for 2-3 columns */
+.container:has(.dashboard-columns) {
+  max-width: 1300px;
+}
+
+/* ---- Header ---- */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 48px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--warm-gray);
+}
+
+.header-left h1 {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: 28px;
+  letter-spacing: -0.5px;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.header-left .date {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ---- Tab cleanup banner ---- */
+.tab-cleanup-banner {
+  background: linear-gradient(135deg, rgba(200, 113, 58, 0.04), rgba(200, 113, 58, 0.09));
+  border: 1px solid rgba(200, 113, 58, 0.18);
+  border-radius: 8px;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.tab-cleanup-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.tab-cleanup-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(200, 113, 58, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.tab-cleanup-icon svg {
+  width: 18px;
+  height: 18px;
+  color: var(--accent-amber);
+}
+
+.tab-cleanup-text {
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+.tab-cleanup-text strong {
+  font-weight: 600;
+}
+
+.tab-cleanup-btn {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: 6px;
+  border: none;
+  background: var(--accent-amber);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.tab-cleanup-btn:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+/* ---- Nudge banner ---- */
+.nudge-banner {
+  background: linear-gradient(135deg, rgba(179, 90, 90, 0.04), rgba(179, 90, 90, 0.08));
+  border: 1px solid rgba(179, 90, 90, 0.15);
+  border-radius: 8px;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.nudge-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(179, 90, 90, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.nudge-icon svg {
+  width: 18px;
+  height: 18px;
+  color: var(--status-abandoned);
+}
+
+.nudge-text {
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+.nudge-text strong {
+  font-weight: 600;
+}
+
+/* ---- Section Headers ---- */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  margin-top: 8px;
+}
+
+.section-header h2 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 18px;
+  font-style: italic;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: var(--warm-gray);
+}
+
+.section-count {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* ---- Mission Cards ---- */
+.missions {
+  columns: 280px;
+  column-gap: 12px;
+  margin-bottom: 40px;
+}
+
+.mission-card {
+  background: var(--card-bg);
+  border: 1px solid var(--warm-gray);
+  border-radius: 8px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  break-inside: avoid;       /* don't split a card across columns */
+  margin-bottom: 12px;       /* vertical spacing (replaces grid gap) */
+}
+
+/* Colored top border instead of side bar for grid cards */
+.mission-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--warm-gray);
+}
+
+.mission-card.has-active-bar::before { background: var(--status-active); }
+.mission-card.has-amber-bar::before { background: var(--accent-amber); }
+.mission-card.has-neutral-bar::before { background: var(--warm-gray); }
+
+.mission-card:hover {
+  box-shadow: 0 4px 20px var(--shadow);
+  transform: translateY(-1px);
+}
+
+/* Closing animation — card scales down and fades out */
+.mission-card.closing {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+
+.mission-card.collapsed {
+  display: none !important;
+}
+
+/* Old side status bar — hidden, replaced by top border via ::before */
+.status-bar {
+  display: none;
+}
+
+.mission-content {
+  min-width: 0;
+}
+
+/* Hide the right-side meta (page count) — info is already in the badge */
+.mission-meta {
+  display: none;
+}
+
+.mission-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.mission-name {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--ink);
+  letter-spacing: -0.2px;
+}
+
+.mission-tag {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+
+.mission-tag.active {
+  color: var(--status-active);
+  background: rgba(61, 122, 74, 0.08);
+}
+
+.mission-tag.cooling {
+  color: var(--status-cooling);
+  background: rgba(184, 137, 46, 0.08);
+}
+
+.mission-tag.abandoned {
+  color: var(--status-abandoned);
+  background: rgba(179, 90, 90, 0.08);
+}
+
+/* Tab indicator badge — shows how many Chrome tabs are still open for this mission */
+.open-tabs-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--accent-amber);
+  background: rgba(200, 113, 58, 0.08);
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+
+.open-tabs-badge svg {
+  width: 10px;
+  height: 10px;
+}
+
+.mission-summary {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.mission-pages {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ---- Tab row — each tab is a full-width row with favicon, title, and actions ---- */
+.page-chip {
+  font-size: 13px;
+  color: var(--ink);
+  background: transparent;
+  padding: 8px 4px;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid rgba(154, 145, 138, 0.1);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.4;
+}
+
+.page-chip:last-child,
+.page-chip-overflow {
+  border-bottom: none;
+}
+
+/* Favicon */
+.chip-favicon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+
+/* Title text — wraps naturally, no truncation */
+.chip-text {
+  flex: 1;
+  min-width: 0;
+  /* Show up to 2 lines, then ellipsis */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Duplicate badge */
+.chip-dupe-badge {
+  color: var(--accent-amber);
+  font-weight: 600;
+}
+
+/* Duplicate border highlight */
+.chip-has-dupes {
+  border-color: rgba(200, 113, 58, 0.25);
+}
+
+/* Action buttons grouped on the right */
+.chip-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* ---- Chip action buttons (save + close) ---- */
+.chip-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  opacity: 0.35;
+  transition: opacity 0.15s, color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+
+.chip-action svg {
+  width: 15px;
+  height: 15px;
+}
+
+.chip-action:hover {
+  opacity: 1;
+  background: rgba(154, 145, 138, 0.1);
+}
+
+.chip-save:hover {
+  color: var(--accent-sage);
+  background: rgba(90, 122, 98, 0.08);
+}
+
+.chip-close:hover {
+  color: var(--status-abandoned);
+  background: rgba(179, 90, 90, 0.08);
+}
+
+.page-chip.clickable {
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.page-chip.clickable:hover {
+  background: rgba(200, 113, 58, 0.04);
+}
+
+/* "+N more" overflow chip */
+.page-chip-overflow {
+  font-size: 12px;
+  color: var(--muted);
+  padding: 6px 4px;
+}
+
+/* mission-meta hidden — see above */
+
+.mission-time {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.mission-page-count {
+  font-size: 20px;
+  font-family: var(--font-serif);
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.mission-page-label {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ---- Actions row ---- */
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.action-btn {
+  font-size: 11px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  padding: 5px 14px;
+  border-radius: 4px;
+  border: 1px solid var(--warm-gray);
+  background: var(--card-bg);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.action-btn:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.action-btn svg {
+  width: 12px;
+  height: 12px;
+}
+
+.action-btn.primary {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.action-btn.primary:hover {
+  opacity: 0.85;
+}
+
+.action-btn.close-tabs {
+  border-color: rgba(200, 113, 58, 0.3);
+  color: var(--accent-amber);
+  background: rgba(200, 113, 58, 0.04);
+}
+
+.action-btn.close-tabs:hover {
+  background: rgba(200, 113, 58, 0.1);
+  border-color: var(--accent-amber);
+}
+
+.action-btn.save-tabs {
+  border-color: rgba(90, 122, 98, 0.3);
+  color: var(--accent-sage);
+  background: rgba(90, 122, 98, 0.04);
+}
+
+.action-btn.save-tabs:hover {
+  background: rgba(90, 122, 98, 0.1);
+  border-color: var(--accent-sage);
+}
+
+.action-btn.danger {
+  color: var(--status-abandoned);
+}
+
+.action-btn.danger:hover {
+  border-color: var(--status-abandoned);
+  color: var(--status-abandoned);
+}
+
+/* ---- Toast notification ---- */
+.toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  z-index: 100;
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.toast svg {
+  width: 16px;
+  height: 16px;
+  color: var(--status-active);
+}
+
+/* ---- Footer ---- */
+footer {
+  margin-top: 48px;
+  padding-top: 20px;
+  border-top: 1px solid var(--warm-gray);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-stats {
+  display: flex;
+  gap: 32px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-num {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1;
+  transition: all 0.3s;
+}
+
+.stat-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.project-credit {
+  text-align: right;
+  color: var(--muted);
+}
+
+.project-credit-primary {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.project-credit-attribution {
+  margin-top: 4px;
+  font-size: 10px;
+  line-height: 1.4;
+  opacity: 0.72;
+}
+
+.project-credit a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.project-credit-primary a {
+  color: var(--ink);
+}
+
+.credit-separator {
+  color: var(--muted);
+  margin: 0 4px;
+}
+
+.refresh-btn {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--accent-amber);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ---- Animations ---- */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+header { animation: fadeUp 0.5s ease both; }
+.tab-cleanup-banner { animation: fadeUp 0.5s ease 0.1s both; }
+.nudge-banner { animation: fadeUp 0.5s ease 0.15s both; }
+.active-section .section-header { animation: fadeUp 0.5s ease 0.2s both; }
+.active-section .missions .mission-card:nth-child(1) { animation: fadeUp 0.4s ease 0.25s both; }
+.active-section .missions .mission-card:nth-child(2) { animation: fadeUp 0.4s ease 0.3s both; }
+.active-section .missions .mission-card:nth-child(3) { animation: fadeUp 0.4s ease 0.35s both; }
+.active-section .missions .mission-card:nth-child(4) { animation: fadeUp 0.4s ease 0.4s both; }
+.abandoned-section .section-header { animation: fadeUp 0.5s ease 0.45s both; }
+.abandoned-section .missions .mission-card:nth-child(1) { animation: fadeUp 0.4s ease 0.5s both; }
+.abandoned-section .missions .mission-card:nth-child(2) { animation: fadeUp 0.4s ease 0.55s both; }
+.abandoned-section .missions .mission-card:nth-child(3) { animation: fadeUp 0.4s ease 0.6s both; }
+footer { animation: fadeUp 0.5s ease 0.65s both; }
+
+/* Suppress entrance animations on live-refresh so the dashboard doesn't
+   flicker when background tab events trigger re-renders. */
+body.no-entrance-anim header,
+body.no-entrance-anim .tab-cleanup-banner,
+body.no-entrance-anim .nudge-banner,
+body.no-entrance-anim .active-section .section-header,
+body.no-entrance-anim .active-section .missions .mission-card,
+body.no-entrance-anim .abandoned-section .section-header,
+body.no-entrance-anim .abandoned-section .missions .mission-card,
+body.no-entrance-anim footer,
+body.no-entrance-anim .deferred-list .deferred-item,
+body.no-entrance-anim .deferred-column .section-header {
+  animation: none !important;
+}
+
+.deferred-list .deferred-item:nth-child(1) { animation-delay: 0.05s; }
+.deferred-list .deferred-item:nth-child(2) { animation-delay: 0.1s; }
+.deferred-list .deferred-item:nth-child(3) { animation-delay: 0.15s; }
+.deferred-list .deferred-item:nth-child(4) { animation-delay: 0.2s; }
+.deferred-list .deferred-item:nth-child(5) { animation-delay: 0.25s; }
+.deferred-column .section-header { animation: fadeUp 0.5s ease 0.1s both; }
+
+
+/* ================================================================
+   STATIC DEFAULT VIEW — new elements added for "AI on demand"
+   ================================================================ */
+
+/* ---- Neutral status bar (domain-grouped cards, no AI color) ---- */
+.status-bar.neutral {
+  background: var(--warm-gray);
+}
+
+/* ---- "Domain" tag on static domain cards ---- */
+.mission-tag.neutral {
+  color: var(--muted);
+  background: rgba(154, 145, 138, 0.1);
+}
+
+/* ================================================================
+   MISSIONS EMPTY STATE
+   Shown when all mission cards have been closed.
+   A calm, satisfying "you did it" moment.
+   ================================================================ */
+
+.missions-empty-state {
+  /* Takes the full width — spans all columns */
+  column-span: all;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  padding: 56px 24px;
+  text-align: center;
+
+  animation: fadeUp 0.5s ease both;
+}
+
+/* CSS-drawn checkmark in a glowing circle */
+.empty-checkmark {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(90, 122, 98, 0.1);
+  border: 1.5px solid rgba(90, 122, 98, 0.3);
+
+  /* Soft sage glow */
+  box-shadow: 0 0 0 8px rgba(90, 122, 98, 0.05),
+              0 0 0 16px rgba(90, 122, 98, 0.03);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Pop in with a gentle scale animation */
+  animation: checkPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+}
+
+.empty-checkmark svg {
+  width: 26px;
+  height: 26px;
+  color: var(--accent-sage);
+  stroke-width: 2.5;
+}
+
+@keyframes checkPop {
+  from { transform: scale(0.6); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.empty-title {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--ink);
+  letter-spacing: -0.3px;
+}
+
+.empty-subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+
+
+/* ================================================================
+   UPDATE BANNER
+   Appears at the very top of the page when a new version is available.
+   Intentionally thin and unobtrusive — it's informational, not urgent.
+   The warm sage green palette feels calm and positive ("new thing!"),
+   contrasting with the amber/rose warning tones used elsewhere.
+   ================================================================ */
+
+.update-banner {
+  /* Thin bar — sits above the header, below the container's top padding */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  /* Sage green tint — matches accent-sage but very light */
+  background: linear-gradient(135deg, rgba(90, 122, 98, 0.05), rgba(90, 122, 98, 0.10));
+  border: 1px solid rgba(90, 122, 98, 0.22);
+  border-radius: 8px;
+  padding: 10px 16px;
+
+  /* Push the header down slightly */
+  margin-bottom: 24px;
+
+  /* Slide in from above when it appears */
+  animation: bannerSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes bannerSlideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Left cluster: icon + text */
+.update-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0; /* prevents text overflow from breaking layout */
+}
+
+.update-banner-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--accent-sage);
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.update-banner-text {
+  font-size: 13px;
+  color: var(--ink);
+  font-weight: 400;
+  line-height: 1.4;
+  opacity: 0.85;
+}
+
+/* Right cluster: action button + dismiss X */
+.update-banner-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* "Update now" button — small, filled, sage green */
+.update-banner-btn {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  background: var(--accent-sage);
+  border: none;
+  border-radius: 5px;
+  padding: 5px 12px;
+  cursor: pointer;
+  letter-spacing: 0.2px;
+  transition: background 0.2s, opacity 0.2s;
+  white-space: nowrap;
+}
+
+.update-banner-btn:hover {
+  background: #4a6952; /* slightly darker sage */
+}
+
+.update-banner-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Dismiss X button — minimal, icon-only */
+.update-banner-dismiss {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+  color: var(--muted);
+  transition: background 0.15s, color 0.15s;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.update-banner-dismiss:hover {
+  background: rgba(26, 22, 19, 0.06);
+  color: var(--ink);
+}
+
+.update-banner-dismiss svg {
+  width: 14px;
+  height: 14px;
+}
+
+
+/* ================================================================
+   SAVED FOR LATER — Checklist Column + Archive
+   ================================================================ */
+
+/* ---- Two-column layout ---- */
+.dashboard-columns {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+/* Open tabs column keeps the grid layout */
+.dashboard-columns .active-section {
+  flex: 1;
+  min-width: 600px;
+}
+
+/* Saved for later column — fixed width on the right, scrolls independently */
+.deferred-column {
+  width: 280px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 32px;
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
+}
+
+/* On narrow screens, stack vertically */
+@media (max-width: 800px) {
+  header {
+    gap: 18px;
+  }
+  .header-right {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .theme-picker {
+    max-width: 100%;
+  }
+  .theme-current-btn {
+    min-width: 118px;
+  }
+  .theme-menu {
+    left: 0;
+    right: auto;
+    width: min(280px, calc(100vw - 64px));
+    grid-template-columns: 1fr;
+  }
+  .dashboard-columns {
+    flex-direction: column;
+  }
+  .deferred-column {
+    width: 100%;
+    position: static;
+  }
+  footer {
+    align-items: flex-start;
+    gap: 18px;
+  }
+  .project-credit {
+    text-align: left;
+  }
+}
+
+/* ---- Checklist items ---- */
+.deferred-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(154, 145, 138, 0.12);
+  animation: fadeUp 0.3s ease both;
+}
+
+.deferred-item:last-child {
+  border-bottom: none;
+}
+
+/* Custom checkbox */
+.deferred-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--warm-gray);
+  border-radius: 4px;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 1px;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.deferred-checkbox:hover {
+  border-color: var(--accent-sage);
+}
+
+.deferred-checkbox:checked {
+  background: var(--accent-sage);
+  border-color: var(--accent-sage);
+}
+
+/* Checkmark inside the checkbox */
+.deferred-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Item content (title, domain, time) */
+.deferred-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.deferred-title {
+  font-size: 13px;
+  color: var(--ink);
+  text-decoration: none;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+
+.deferred-title:hover {
+  color: var(--accent-amber);
+}
+
+.deferred-meta {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+  display: flex;
+  gap: 8px;
+}
+
+/* Checked-off item — strikethrough + faded */
+.deferred-item.checked .deferred-title {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+.deferred-item.checked .deferred-meta {
+  opacity: 0.5;
+}
+
+/* Dismiss (X) button */
+.deferred-dismiss {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 2px;
+  opacity: 0.3;
+  transition: opacity 0.15s, color 0.15s;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.deferred-dismiss svg {
+  width: 14px;
+  height: 14px;
+}
+
+.deferred-dismiss:hover {
+  opacity: 1;
+  color: var(--status-abandoned);
+}
+
+/* Slide-out animation for items being removed */
+.deferred-item.removing {
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* ---- Empty state ---- */
+.deferred-empty {
+  font-size: 13px;
+  color: var(--muted);
+  font-style: italic;
+  padding: 24px 0;
+  text-align: center;
+}
+
+/* ---- Archive section ---- */
+.deferred-archive {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--warm-gray);
+}
+
+.archive-toggle {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  width: 100%;
+  text-align: left;
+  transition: color 0.15s;
+}
+
+.archive-toggle:hover {
+  color: var(--ink);
+}
+
+.archive-chevron {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.2s;
+}
+
+.archive-toggle.open .archive-chevron {
+  transform: rotate(180deg);
+}
+
+.archive-count {
+  font-size: 11px;
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+.archive-body {
+  padding-top: 12px;
+}
+
+.archive-search {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--warm-gray);
+  border-radius: 6px;
+  background: var(--card-bg);
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s;
+  margin-bottom: 12px;
+}
+
+.archive-search:focus {
+  border-color: var(--accent-amber);
+}
+
+.archive-search::placeholder {
+  color: var(--muted);
+}
+
+/* Archive items are simpler — just title + domain + date */
+.archive-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(154, 145, 138, 0.08);
+}
+
+.archive-item:last-child {
+  border-bottom: none;
+}
+
+.archive-item-title {
+  font-size: 12px;
+  color: var(--muted);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+  transition: color 0.15s;
+}
+
+.archive-item-title:hover {
+  color: var(--ink);
+}
+
+.archive-item-date {
+  font-size: 10px;
+  color: var(--muted);
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+
+/* ================================================================
+   OPEN-TABS SEARCH PILL (lives in the section-header)
+   Inline input that filters domain cards and individual tab chips
+   as the user types. Paired with a "/" keyboard shortcut.
+   ================================================================ */
+
+.open-tabs-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  padding: 3px 8px;
+  border: 1px solid var(--warm-gray);
+  border-radius: 20px;
+  background: transparent;
+  cursor: text;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.open-tabs-search-wrap:focus-within {
+  background: var(--card-bg);
+  border-color: var(--accent-slate);
+  box-shadow: 0 0 0 3px rgba(90, 107, 122, 0.08);
+}
+
+.search-icon {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+.open-tabs-search-wrap:focus-within .search-icon {
+  color: var(--accent-slate);
+}
+
+.open-tabs-search {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  width: 80px;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  outline: none;
+  transition: width 0.2s ease;
+}
+
+.open-tabs-search:focus,
+.open-tabs-search:not(:placeholder-shown) {
+  width: 160px;
+}
+
+.open-tabs-search::placeholder {
+  color: var(--muted);
+}
+
+.open-tabs-search-hint {
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--warm-gray);
+  border-radius: 3px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+
+.open-tabs-search-wrap:focus-within .open-tabs-search-hint,
+.open-tabs-search:not(:placeholder-shown) ~ .open-tabs-search-hint {
+  opacity: 0;
+}
+
+/* While filtering: expand any collapsed "+N more" containers so the
+   search matches all chips, not just the initially visible ones. */
+.missions.is-searching .page-chips-overflow {
+  display: contents !important;
+}
+.missions.is-searching .page-chip-overflow {
+  display: none !important;
+}
+
+.page-chip.search-hidden {
+  display: none !important;
+}
+.mission-card.search-hidden {
+  display: none !important;
+}
+.ungrouped-section.search-hidden {
+  display: none !important;
+}
+
+
+/* ================================================================
+   PRIVACY MODE
+   - Lock toggle lives in the header-right, next to the theme switcher
+   - When body.privacy-mode is set, the dashboard hides and the
+     .privacy-screen (clock / date / motto / search) takes over.
+   ================================================================ */
+
+.privacy-toggle {
+  background: none;
+  border: 1px solid var(--warm-gray);
+  border-radius: 8px;
+  padding: 6px 8px;
+  cursor: pointer;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.privacy-toggle:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+  background: rgba(26, 22, 19, 0.03);
+}
+
+.privacy-icon-on  { display: none; }
+.privacy-icon-off { display: block; }
+
+body.privacy-mode .privacy-icon-on  { display: block; }
+body.privacy-mode .privacy-icon-off { display: none; }
+body.privacy-mode .privacy-toggle {
+  color: var(--accent-amber);
+  border-color: var(--accent-amber);
+}
+
+/* Hide dashboard content while in privacy mode. The theme switcher
+   stays visible next to the lock icon so the user can still retheme. */
+body.privacy-mode .tab-cleanup-banner,
+body.privacy-mode .dashboard-columns,
+body.privacy-mode footer {
+  display: none !important;
+}
+
+body.privacy-mode .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  max-width: 960px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+body.privacy-mode header {
+  position: fixed;
+  top: 24px;
+  right: 32px;
+  z-index: 40;
+  border-bottom: none;
+  margin-bottom: 0;
+  padding: 0;
+  width: auto;
+  justify-content: flex-end;
+}
+
+body.privacy-mode .header-right {
+  justify-content: flex-end;
+}
+
+body.privacy-mode .theme-menu {
+  position: fixed;
+  top: 68px;
+  right: 32px;
+  width: min(280px, calc(100vw - 64px));
+  max-height: calc(100vh - 92px);
+  overflow-y: auto;
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 800px) {
+  body.privacy-mode header {
+    top: 16px;
+    right: 16px;
+    left: 16px;
+    width: auto;
+  }
+
+  body.privacy-mode .theme-menu {
+    top: 60px;
+    right: 16px;
+    width: min(280px, calc(100vw - 32px));
+    grid-template-columns: 1fr;
+  }
+}
+
+body.privacy-mode .header-left { display: none; }
+body.privacy-mode .privacy-screen { display: flex; }
+
+.privacy-screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  user-select: none;
+  position: relative;
+}
+
+.privacy-time {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: 96px;
+  letter-spacing: -3px;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.privacy-date {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--ink);
+  opacity: 0.45;
+  letter-spacing: 0.5px;
+  margin-top: 16px;
+}
+
+.privacy-motto {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--muted);
+  margin-top: 24px;
+  max-width: 480px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.privacy-motto:empty { display: none; }
+
+.privacy-search {
+  margin-top: 32px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.privacy-search-input {
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  padding: 12px 20px;
+  border: 1px solid var(--warm-gray);
+  border-radius: 24px;
+  background: var(--card-bg);
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.privacy-search-input::placeholder { color: var(--muted); }
+
+.privacy-search-input:focus {
+  border-color: var(--accent-amber);
+  box-shadow: 0 0 0 3px rgba(200, 113, 58, 0.1);
+}
+
+.privacy-hint {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 40px;
+  opacity: 0.5;
+}
+
+.privacy-hint kbd {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  background: var(--warm-gray);
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+.privacy-settings-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  opacity: 0.3;
+  transition: opacity 0.2s;
+  padding: 4px;
+  z-index: 11;
+}
+
+.privacy-settings-btn:hover { opacity: 1; }
+
+.privacy-settings {
+  position: fixed;
+  bottom: 52px;
+  right: 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--warm-gray);
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 4px 20px var(--shadow);
+  width: 220px;
+  z-index: 10;
+}
+
+.privacy-settings-title {
+  font-family: var(--font-serif);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+
+.privacy-setting-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink);
+  padding: 4px 0;
+  cursor: pointer;
+}
+
+.privacy-setting-row input[type="checkbox"] {
+  accent-color: var(--accent-amber);
+}
+
+.privacy-setting-sub { padding: 4px 0 4px 24px; }
+
+.privacy-setting-input {
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  padding: 6px 10px;
+  border: 1px solid var(--warm-gray);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+  outline: none;
+}
+
+.privacy-setting-input:focus {
+  border-color: var(--accent-amber);
+}
+
+
+/* ================================================================
+   VIEW TOGGLE PILLS (Groups ↔ Domains)
+   Rendered inside .section-count by buildViewToggle() in app.js.
+   ================================================================ */
+
+.view-toggle {
+  display: inline-flex;
+  gap: 2px;
+  background: var(--paper);
+  border: 1px solid var(--warm-gray);
+  border-radius: 20px;
+  padding: 2px;
+  vertical-align: middle;
+}
+
+.toggle-pill {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  padding: 3px 10px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  line-height: 1;
+}
+
+.toggle-pill.active {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.toggle-pill:hover:not(.active) {
+  color: var(--ink);
+}
+
+
+/* ================================================================
+   UNGROUPED SECTION (group view only)
+   ================================================================ */
+
+.ungrouped-section {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--warm-gray);
+}
+
+.ungrouped-label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.ungrouped-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
