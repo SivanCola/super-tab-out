@@ -8,7 +8,7 @@ This policy explains what data the extension uses, where it is stored, and what 
 
 ## Single Purpose
 
-Super Tab Out helps users organize, search, save, and close their currently open browser tabs from a local new-tab dashboard.
+Super Tab Out helps users organize, filter, save, and close their currently open browser tabs from a local new-tab dashboard.
 
 ## Data the Extension Uses
 
@@ -58,7 +58,7 @@ https://icons.duckduckgo.com
 
 These requests are used to display small site icons next to tab entries. Favicons are cached locally for up to 7 days to reduce repeated network requests.
 
-Privacy mode includes an optional Google search form. A request to Google occurs only when the user actively submits a search from that form. The search box can be hidden in privacy mode settings.
+Privacy mode does not provide a web search box and does not change the browser search provider.
 
 ## Permissions
 

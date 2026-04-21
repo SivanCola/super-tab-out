@@ -13,7 +13,7 @@ Super Tab Out
 **Short description**
 
 ```text
-A local-first new tab dashboard for organizing open tabs with search, privacy mode, themes, and Chrome Tab Groups.
+A local-first new tab dashboard for organizing open tabs with tab filtering, privacy mode, themes, and Chrome Tab Groups.
 ```
 
 **Category**
@@ -39,7 +39,7 @@ It helps you understand what is open, find the right tab faster, clean up duplic
 
 Highlights:
 - Group tabs by domain or by Chrome's native Tab Groups
-- Search tabs instantly with the / shortcut
+- Filter tabs instantly with the / shortcut
 - Hide tab details with privacy mode before screen sharing
 - Protect pinned tabs from bulk-close and duplicate-cleanup actions
 - Detect duplicate pages and close extras while keeping one copy
@@ -61,7 +61,7 @@ Super Tab Out is a derivative work based on Tab Out by Zara Zhang and is distrib
 Use this in the Privacy tab if prompted.
 
 ```text
-Super Tab Out replaces the new tab page with a local dashboard for organizing, searching, saving, and closing currently open browser tabs.
+Super Tab Out replaces the new tab page with a local dashboard for organizing, filtering, saving, and closing currently open browser tabs.
 ```
 
 ## Permission Justifications
@@ -113,26 +113,31 @@ https://github.com/SivanCola/super-tab-out/blob/main/PRIVACY.md
 Chrome Web Store screenshots should show the extension's actual UI. Recommended set:
 
 1. **Main dashboard in domain view**
+   - Upload: `store-assets/screenshot-1-dashboard.jpg`
    - Show several domain cards.
-   - Include search pill and theme/language controls.
+   - Include the tab filter control and theme/language controls.
    - Demonstrates the primary new-tab value.
 
 2. **Chrome Tab Groups view**
+   - Upload: `store-assets/screenshot-2-groups.jpg`
    - Create at least one Chrome Tab Group before taking the screenshot.
    - Show the Groups / Domains toggle.
    - Demonstrates native group support.
 
 3. **Privacy mode**
-   - Show the clock/search privacy screen.
+   - Upload: `store-assets/screenshot-3-privacy.jpg`
+   - Show the clock privacy screen.
    - Keep the UI free of private tab titles.
    - Demonstrates screen-sharing safety.
 
 4. **Theme picker**
+   - Upload: `store-assets/screenshot-4-themes.jpg`
    - Open the theme menu.
    - Show the 10 available palettes.
    - Demonstrates customization.
 
 5. **Chinese UI**
+   - Upload: `store-assets/screenshot-5-chinese.jpg`
    - Switch to `中`.
    - Show the same dashboard or privacy mode in Simplified Chinese.
    - Demonstrates bilingual support.
@@ -155,6 +160,20 @@ Chrome Web Store screenshots should show the extension's actual UI. Recommended 
 - Pin one tab to demonstrate pinned-tab protection if useful.
 - Use the same theme across most screenshots for visual consistency, then use the theme picker screenshot to show variety.
 
+## Generated Local Assets
+
+These files are generated in this repository and can be uploaded directly:
+
+| Store field | Local file |
+| --- | --- |
+| Store icon, 128x128 | `extension/icons/icon128.png` |
+| Screenshot 1 | `store-assets/screenshot-1-dashboard.jpg` |
+| Screenshot 2 | `store-assets/screenshot-2-groups.jpg` |
+| Screenshot 3 | `store-assets/screenshot-3-privacy.jpg` |
+| Screenshot 4 | `store-assets/screenshot-4-themes.jpg` |
+| Screenshot 5 | `store-assets/screenshot-5-chinese.jpg` |
+| Small promo tile, 440x280 | `store-assets/promo-small-440x280.jpg` |
+
 ## Release Package Checklist
 
 Before uploading:
@@ -164,4 +183,3 @@ Before uploading:
 - The ZIP does not contain `.git`, `.omx`, `.DS_Store`, `__MACOSX`, or personal `config.local.js`.
 - The version in `manifest.json` is correct for this release.
 - The extension was loaded locally and smoke-tested after packaging.
-

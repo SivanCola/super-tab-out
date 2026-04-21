@@ -99,9 +99,6 @@
     <div class="privacy-time" id="privacyTime"></div>
     <div class="privacy-date" id="privacyDate"></div>
     <div class="privacy-motto" id="privacyMotto"></div>
-    <form class="privacy-search" id="privacySearch" action="https://www.google.com/search" method="GET">
-      <input type="text" name="q" class="privacy-search-input" id="privacySearchInput" placeholder="Search Google" autocomplete="off" data-i18n-placeholder="privacySearchPlaceholder">
-    </form>
     <div class="privacy-hint" data-i18n-html="privacyHint">Press <kbd>Esc</kbd> to show your tabs</div>
 
     <button class="privacy-settings-btn" id="privacySettingsBtn" title="Customize privacy screen" data-i18n-title="privacySettingsTitle">
@@ -125,9 +122,6 @@
       <div class="privacy-setting-sub" id="psMottoEdit">
         <input type="text" id="psMottoInput" class="privacy-setting-input" placeholder="Type your text here..." data-i18n-placeholder="mottoPlaceholder">
       </div>
-      <label class="privacy-setting-row">
-        <input type="checkbox" id="psSearch" checked> <span data-i18n="searchBox">Search box</span>
-      </label>
     </div>
   </div>
 
@@ -164,7 +158,7 @@
         <div class="section-line"></div>
         <div class="open-tabs-search-wrap">
           <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
-          <input type="text" class="open-tabs-search" id="openTabsSearch" placeholder="Search" autocomplete="off" spellcheck="false" data-i18n-placeholder="search">
+          <input type="text" class="open-tabs-search" id="openTabsSearch" placeholder="Filter tabs" autocomplete="off" spellcheck="false" data-i18n-placeholder="search">
           <span class="open-tabs-search-hint">/</span>
         </div>
         <div class="section-count" id="openTabsSectionCount"></div>
@@ -196,7 +190,7 @@
           <span class="archive-count" id="archiveCount"></span>
         </button>
         <div class="archive-body" id="archiveBody" style="display:none">
-          <input type="text" class="archive-search" id="archiveSearch" placeholder="Search archived tabs..." data-i18n-placeholder="archiveSearchPlaceholder">
+          <input type="text" class="archive-search" id="archiveSearch" placeholder="Filter archived tabs..." data-i18n-placeholder="archiveSearchPlaceholder">
           <div class="archive-list" id="archiveList"></div>
         </div>
       </div>

@@ -337,7 +337,6 @@ const UI_COPY = {
     themeEmber: 'Ember slate',
     themeLavender: 'Lavender mint',
     themeCurrentTitle: ({ theme }) => `Theme: ${theme}`,
-    privacySearchPlaceholder: 'Search Google',
     privacyHint: 'Press <kbd>Esc</kbd> to show your tabs',
     privacySettingsTitle: 'Customize privacy screen',
     customize: 'Customize',
@@ -345,13 +344,12 @@ const UI_COPY = {
     date: 'Date',
     customText: 'Custom text',
     mottoPlaceholder: 'Type your text here...',
-    searchBox: 'Search box',
     closeExtras: 'Close extras',
-    search: 'Search',
+    search: 'Filter tabs',
     savedForLater: 'Saved for later',
     deferredEmpty: 'Nothing saved. Living in the moment.',
     archive: 'Archive',
-    archiveSearchPlaceholder: 'Search archived tabs...',
+    archiveSearchPlaceholder: 'Filter archived tabs...',
     openTabsStat: 'Open tabs',
     creditBy: 'by SivanCola',
     creditAttribution: 'Derived from <a href="https://github.com/zarazhangrui/tab-out" target="_top">Tab Out</a> by <a href="https://x.com/zarazhangrui" target="_top">Zara Zhang</a> under MIT.',
@@ -414,7 +412,6 @@ const UI_COPY = {
     themeEmber: '余烬石板',
     themeLavender: '薰衣草薄荷',
     themeCurrentTitle: ({ theme }) => `主题：${theme}`,
-    privacySearchPlaceholder: '搜索 Google',
     privacyHint: '按 <kbd>Esc</kbd> 显示标签页',
     privacySettingsTitle: '自定义隐私屏幕',
     customize: '自定义',
@@ -422,13 +419,12 @@ const UI_COPY = {
     date: '日期',
     customText: '自定义文字',
     mottoPlaceholder: '输入你的文字...',
-    searchBox: '搜索框',
     closeExtras: '关闭多余项',
-    search: '搜索',
+    search: '过滤标签页',
     savedForLater: '稍后再看',
     deferredEmpty: '没有保存内容。活在当下。',
     archive: '归档',
-    archiveSearchPlaceholder: '搜索已归档标签...',
+    archiveSearchPlaceholder: '过滤已归档标签...',
     openTabsStat: '打开的标签页',
     creditBy: '作者 SivanCola',
     creditAttribution: '基于 <a href="https://github.com/zarazhangrui/tab-out" target="_top">Tab Out</a>（<a href="https://x.com/zarazhangrui" target="_top">Zara Zhang</a>）二次开发，遵循 MIT 许可。',
@@ -2360,7 +2356,7 @@ document.addEventListener('load', (e) => {
    a locked session is reopened.
    ---------------------------------------------------------------- */
 
-const PRIVACY_DEFAULTS = { clock: true, date: true, motto: true, search: true, mottoText: '' };
+const PRIVACY_DEFAULTS = { clock: true, date: true, motto: true, mottoText: '' };
 
 async function getPrivacyMode() {
   try {
@@ -2398,18 +2394,16 @@ async function applyPrivacyWidgets() {
   const timeEl   = document.getElementById('privacyTime');
   const dateEl   = document.getElementById('privacyDate');
   const mottoEl  = document.getElementById('privacyMotto');
-  const searchEl = document.getElementById('privacySearch');
 
   if (timeEl)   timeEl.style.display   = s.clock  ? '' : 'none';
   if (dateEl)   dateEl.style.display   = s.date   ? '' : 'none';
-  if (searchEl) searchEl.style.display = s.search ? '' : 'none';
   if (mottoEl) {
     mottoEl.style.display = s.motto && s.mottoText ? '' : 'none';
     mottoEl.textContent   = s.mottoText || '';
   }
 
   // Sync checkboxes in the settings panel with persisted state.
-  const ids = { psClock: 'clock', psDate: 'date', psMotto: 'motto', psSearch: 'search' };
+  const ids = { psClock: 'clock', psDate: 'date', psMotto: 'motto' };
   for (const [elId, key] of Object.entries(ids)) {
     const cb = document.getElementById(elId);
     if (cb) cb.checked = s[key];
@@ -2468,7 +2462,7 @@ document.addEventListener('keydown', (e) => {
     return;
   }
   const active = document.activeElement;
-  const GUARDED_IDS = ['privacySearchInput', 'psMottoInput', 'openTabsSearch', 'archiveSearch'];
+  const GUARDED_IDS = ['psMottoInput', 'openTabsSearch', 'archiveSearch'];
   if (active && GUARDED_IDS.includes(active.id)) {
     active.blur();
     return;
@@ -2494,13 +2488,12 @@ document.addEventListener('click', (e) => {
   panel.style.display = 'none';
 });
 
-for (const id of ['psClock', 'psDate', 'psMotto', 'psSearch']) {
+for (const id of ['psClock', 'psDate', 'psMotto']) {
   document.getElementById(id)?.addEventListener('change', async () => {
     const s = await getPrivacySettings();
     s.clock  = document.getElementById('psClock')?.checked ?? true;
     s.date   = document.getElementById('psDate')?.checked ?? true;
     s.motto  = document.getElementById('psMotto')?.checked ?? true;
-    s.search = document.getElementById('psSearch')?.checked ?? true;
     await savePrivacySettings(s);
     applyPrivacyWidgets();
   });

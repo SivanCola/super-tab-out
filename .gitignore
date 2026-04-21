@@ -9,3 +9,6 @@ extension/config.local.js
 .claude
 AGENTS.md
 .omx/
+
+# Local browser binary used for extension debugging only. Do not publish.
+tools/chrome-for-testing/

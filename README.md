@@ -4,7 +4,7 @@ English · [简体中文](./README.zh-CN.md)
 
 **A polished local new-tab command center for Chromium browsers.**
 
-Super Tab Out replaces the default new tab page with a visual dashboard for your open tabs. It groups tabs by domain or by Chrome Tab Groups, protects pinned tabs, gives you fast search, privacy mode, bilingual UI, and a richer theme picker.
+Super Tab Out replaces the default new tab page with a visual dashboard for your open tabs. It groups tabs by domain or by Chrome Tab Groups, protects pinned tabs, gives you fast tab filtering, privacy mode, bilingual UI, and a richer theme picker.
 
 No server. No account. No telemetry. No build step. Load the `extension/` folder and use it.
 
@@ -13,8 +13,8 @@ No server. No account. No telemetry. No build step. Load the `extension/` folder
 ## Highlights
 
 - **Two ways to organize tabs**: switch between domain grouping and Chrome's native Tab Groups.
-- **Fast tab search**: press `/` and filter cards, chips, URLs, and group names in real time.
-- **Privacy mode for screen sharing**: click the lock or press `Esc` to hide the tab dashboard behind a clean clock/search screen.
+- **Fast tab filtering**: press `/` and filter cards, chips, URLs, and group names in real time.
+- **Privacy mode for screen sharing**: click the lock or press `Esc` to hide the tab dashboard behind a clean clock screen.
 - **Pinned tabs are protected**: pinned tabs are excluded from cards, counts, duplicate cleanup, and bulk-close actions.
 - **One-click duplicate cleanup**: repeated URLs are marked and can be cleaned while keeping one copy.
 - **Save for later**: stash a tab into a local checklist before closing it.
@@ -80,12 +80,41 @@ git pull
 
 ---
 
+## Debugging
+
+For normal manual testing, use Chrome and load the `extension/` folder from `chrome://extensions`.
+
+For automated extension testing, use **Chrome for Testing** instead of the regular branded Chrome app. Recent branded Chrome builds can block command-line unpacked-extension loading, while Chrome for Testing keeps that workflow available for automation.
+
+This workspace can keep a local browser binary at:
+
+```text
+tools/chrome-for-testing/
+```
+
+That directory is intentionally ignored by Git because it is large and only needed for local debugging. It is not included in the Chrome Web Store / Edge Add-ons zip packages.
+
+Example launch command:
+
+```bash
+"tools/chrome-for-testing/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing" \
+  --user-data-dir=/tmp/super-tab-out-chrome-profile \
+  --remote-debugging-port=9224 \
+  --remote-allow-origins='*' \
+  --load-extension="$(pwd)/extension" \
+  --disable-extensions-except="$(pwd)/extension" \
+  --no-first-run \
+  --no-default-browser-check
+```
+
+---
+
 ## Keyboard Shortcuts
 
 | Key | Action |
 | --- | --- |
-| `/` | Focus the open-tabs search field |
-| `Esc` while search is focused | Clear and blur search |
+| `/` | Focus the open-tabs filter field |
+| `Esc` while the filter is focused | Clear and blur the filter |
 | `Esc` elsewhere | Toggle privacy mode |
 | `Ctrl/Cmd + Shift + G` | Toggle Groups / Domains view |
 
@@ -115,12 +144,11 @@ The bookmark button saves a tab into `chrome.storage.local` before closing it. S
 
 ### Privacy Mode
 
-Privacy mode hides the tab dashboard and shows a minimal clock/date/search screen. It is useful before screen sharing or recording. You can customize whether the privacy screen shows:
+Privacy mode hides the tab dashboard and shows a minimal clock/date screen. It is useful before screen sharing or recording. You can customize whether the privacy screen shows:
 
 - clock
 - date
 - custom text
-- search box
 
 ### Themes and Language
 
@@ -149,7 +177,7 @@ The only routine external request is:
 
 No Google Fonts are used. Fonts come from system font stacks.
 
-Privacy mode includes an optional Google search form. If you disable the search box in privacy settings, that form is not shown.
+Privacy mode does not provide a web search box or change the browser search provider.
 
 ---
 
@@ -186,7 +214,7 @@ Super Tab Out is a derivative work based on **[Tab Out](https://github.com/zaraz
 
 This project keeps the required copyright and license notices in [`LICENSE`](./LICENSE). Please do not remove those notices from substantial copies or distributions.
 
-This fork adds security hardening, Manifest V3 updates, cross-browser new-tab handling, pinned-tab protection, Chrome Tab Groups view, bilingual UI, expanded theme support, privacy mode, search, favicon caching, and local-first saved-tab workflows.
+This fork adds security hardening, Manifest V3 updates, cross-browser new-tab handling, pinned-tab protection, Chrome Tab Groups view, bilingual UI, expanded theme support, privacy mode, tab filtering, favicon caching, and local-first saved-tab workflows.
 
 This project is not affiliated with Google, Chrome, Microsoft Edge, Brave, DuckDuckGo, or the original Tab Out author. Product names and service names are used only to describe compatibility or attribution.
 
