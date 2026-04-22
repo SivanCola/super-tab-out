@@ -186,8 +186,8 @@ Privacy mode does not provide a web search box or change the browser search prov
 
 Store upload packages are generated into `dist/` only:
 
-- `dist/super-tab-out-chrome-1.0.0.zip`
-- `dist/super-tab-out-edge-1.0.0.zip`
+- `dist/super-tab-out-chrome-1.0.1.zip`
+- `dist/super-tab-out-edge-1.0.1.zip`
 
 ---
 

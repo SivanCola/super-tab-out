@@ -4,6 +4,15 @@ English · [简体中文](./CHANGELOG.zh-CN.md)
 
 All notable changes to Super Tab Out are tracked here.
 
+## 1.0.1 - 2026-04-22
+
+### Changed
+
+- Bumped the extension manifest version to `1.0.1` for the next store upload.
+- Renamed generated Chrome and Edge store packages to `super-tab-out-chrome-1.0.1.zip` and `super-tab-out-edge-1.0.1.zip`.
+- Updated English and Simplified Chinese documentation to point to the new package filenames.
+- Fixed the theme picker layer so the full palette opens above the tab dashboard.
+
 ## 1.0.0 - 2026-04-21
 
 ### Added

@@ -1981,6 +1981,8 @@ body {
 }
 
 header {
+  position: relative;
+  z-index: 60;
   align-items: center;
   gap: 24px;
   margin-bottom: 30px;
