@@ -1,5 +1,6 @@
 /* ================================================================
    Super Tab Out — Dashboard App (Pure Extension Edition)
+   Super Tab Out is Apache-2.0.
    Based on Tab Out by Zara Zhang (MIT) — https://github.com/zarazhangrui/tab-out
 
    This file is the brain of the dashboard. Now that the dashboard
@@ -352,7 +353,7 @@ const UI_COPY = {
     archiveSearchPlaceholder: 'Filter archived tabs...',
     openTabsStat: 'Open tabs',
     creditBy: 'by SivanCola',
-    creditAttribution: 'Derived from <a href="https://github.com/zarazhangrui/tab-out" target="_top">Tab Out</a> by <a href="https://x.com/zarazhangrui" target="_top">Zara Zhang</a> under MIT.',
+    creditAttribution: 'Apache-2.0. Derived from <a href="https://github.com/zarazhangrui/tab-out" target="_top">Tab Out</a> by <a href="https://x.com/zarazhangrui" target="_top">Zara Zhang</a> under MIT.',
     greetingMorning: 'Good morning',
     greetingAfternoon: 'Good afternoon',
     greetingEvening: 'Good evening',
@@ -427,7 +428,7 @@ const UI_COPY = {
     archiveSearchPlaceholder: '过滤已归档标签...',
     openTabsStat: '打开的标签页',
     creditBy: '作者 SivanCola',
-    creditAttribution: '基于 <a href="https://github.com/zarazhangrui/tab-out" target="_top">Tab Out</a>（<a href="https://x.com/zarazhangrui" target="_top">Zara Zhang</a>）二次开发，遵循 MIT 许可。',
+    creditAttribution: '遵循 Apache-2.0。基于 <a href="https://github.com/zarazhangrui/tab-out" target="_top">Tab Out</a>（<a href="https://x.com/zarazhangrui" target="_top">Zara Zhang</a>）二次开发；原项目为 MIT 许可。',
     greetingMorning: '早上好',
     greetingAfternoon: '下午好',
     greetingEvening: '晚上好',

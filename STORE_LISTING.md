@@ -53,7 +53,7 @@ Privacy:
 Super Tab Out does not require an account, does not use analytics, does not sell data, and does not upload your tab list to a server. Saved tabs and preferences stay on your device. The extension may request favicons from DuckDuckGo's icon service and cache them locally for up to 7 days.
 
 Attribution:
-Super Tab Out is a derivative work based on Tab Out by Zara Zhang and is distributed under the MIT License. This project is not affiliated with Google, Chrome, Microsoft Edge, Brave, DuckDuckGo, or the original Tab Out author.
+Super Tab Out is distributed under the Apache License 2.0. It is a derivative work based on Tab Out by Zara Zhang, which is licensed under the MIT License. Required upstream MIT notices are preserved in this project's NOTICE file. This project is not affiliated with Google, Chrome, Microsoft Edge, Brave, DuckDuckGo, or the original Tab Out author.
 ```
 
 ## Single Purpose Statement
