@@ -220,12 +220,14 @@ Super Tab Out 采用本地优先设计。
 
 ## 致谢与许可
 
-Super Tab Out 是基于 **Zara Zhang** 的 **[Tab Out](https://github.com/zarazhangrui/tab-out)** 的衍生作品，并按 MIT License 分发。
+Super Tab Out 按 Apache License 2.0 分发。
 
-本项目在 [`LICENSE`](./LICENSE) 中保留了必要的版权和许可声明。请不要从实质性复制或分发版本中移除这些声明。
+本项目是基于 **Zara Zhang** 的 **[Tab Out](https://github.com/zarazhangrui/tab-out)** 的衍生作品；原项目使用 MIT License。
+
+Apache-2.0 协议全文位于 [`LICENSE`](./LICENSE)。上游 MIT 的必要版权和许可声明保留在 [`NOTICE`](./NOTICE)。请不要从实质性复制或分发版本中移除这些声明。
 
 本分叉在此基础上加入了安全加固、Manifest V3 更新、跨浏览器新标签识别、固定标签保护、Chrome Tab Groups 视图、中英文界面、扩展主题、隐私模式、标签过滤、favicon 缓存以及本地优先的稍后再看流程。
 
 本项目不隶属于 Google、Chrome、Microsoft Edge、Brave、DuckDuckGo 或原 Tab Out 作者。相关产品名和服务名仅用于说明兼容性或必要署名。
 
-MIT。详见 [`LICENSE`](./LICENSE)。
+Apache-2.0。详见 [`LICENSE`](./LICENSE) 和 [`NOTICE`](./NOTICE)。

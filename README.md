@@ -220,12 +220,14 @@ Everything runs inside the extension page. The background service worker only ke
 
 ## Attribution and License
 
-Super Tab Out is a derivative work based on **[Tab Out](https://github.com/zarazhangrui/tab-out)** by **Zara Zhang**, redistributed under the MIT License.
+Super Tab Out is licensed under the Apache License, Version 2.0.
 
-This project keeps the required copyright and license notices in [`LICENSE`](./LICENSE). Please do not remove those notices from substantial copies or distributions.
+This project is a derivative work based on **[Tab Out](https://github.com/zarazhangrui/tab-out)** by **Zara Zhang**, which is licensed under the MIT License.
+
+The Apache-2.0 license text is in [`LICENSE`](./LICENSE). Required upstream MIT copyright and permission notices are preserved in [`NOTICE`](./NOTICE). Please do not remove those notices from substantial copies or distributions.
 
 This fork adds security hardening, Manifest V3 updates, cross-browser new-tab handling, pinned-tab protection, Chrome Tab Groups view, bilingual UI, expanded theme support, privacy mode, tab filtering, favicon caching, and local-first saved-tab workflows.
 
 This project is not affiliated with Google, Chrome, Microsoft Edge, Brave, DuckDuckGo, or the original Tab Out author. Product names and service names are used only to describe compatibility or attribution.
 
-MIT. See [`LICENSE`](./LICENSE).
+Apache-2.0. See [`LICENSE`](./LICENSE) and [`NOTICE`](./NOTICE).
