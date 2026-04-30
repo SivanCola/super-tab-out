@@ -6,6 +6,8 @@
 
 ## 未发布
 
+## 1.0.2 - 2026-04-30
+
 ### 新增
 
 - 新增 schema 感知的 storage、tabs、search、actions 和 metrics 服务，作为 v1.1 基础架构拆分的第一步。
@@ -26,6 +28,8 @@
 - 扩展新标签页搜索框，现在会同时过滤标签卡片和稍后再看/归档条目。
 - 更新 `sidePanel` 和 `sessions` 权限相关的隐私与说明文档。
 - 更新外部 favicon 开关相关的隐私说明。
+- 更新 README 截图库和商店截图，覆盖当前 Command Center 与 Tools 界面。
+- 将扩展、package 元数据、校验脚本目标包名以及 Chrome/Edge 商店包同步提升到 `1.0.2`。
 
 ## 1.0.1 - 2026-04-22
 

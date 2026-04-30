@@ -7,7 +7,7 @@
 <h3>The Local-First New Tab Dashboard for Chrome, Edge & Brave</h3>
 
 <p>
-  <img alt="version v1.0.1" src="https://img.shields.io/badge/version-v1.0.1-2388d9?labelColor=555555">
+  <img alt="version v1.0.2" src="https://img.shields.io/badge/version-v1.0.2-2388d9?labelColor=555555">
   <img alt="platform Chrome Edge Brave" src="https://img.shields.io/badge/platform-Chrome%20%7C%20Edge%20%7C%20Brave-9a9a9a?labelColor=555555">
   <img alt="built with MV3 and Vanilla JS" src="https://img.shields.io/badge/built%20with-MV3%20%2B%20Vanilla%20JS-ff7a3d?labelColor=555555">
   <img alt="license Apache 2.0" src="https://img.shields.io/badge/license-Apache--2.0-35c52a?labelColor=555555">
@@ -36,6 +36,7 @@ Release notes are tracked in [`CHANGELOG.md`](./CHANGELOG.md).
 - **Fast tab filtering**: press `/` and filter cards, chips, URLs, and group names in real time.
 - **Search operators**: narrow results with `domain:`, `group:`, `url:`, and `saved:`; fuzzy matches are highlighted.
 - **Side Panel command center**: search, jump, save, close, dedupe, restore recently closed tabs, and use local tools without leaving the current page.
+- **Docked Command Center**: desktop layouts keep tools one click away with a compact dock and sortable favorite tools.
 - **FeHelper-inspired local tools**: open a full three-column local tools workbench for JSON, URL parsing, codecs, timestamps, real QR SVGs, UUID/passwords, hashes, cookies, and session export.
 - **Keyboard and omnibox entry points**: use `sto` in the address bar for search/actions, or commands for panel/session/privacy workflows.
 - **Accessibility and motion controls**: icon buttons have accessible labels, chips support keyboard activation, and system reduced-motion preferences are respected.
@@ -51,6 +52,8 @@ Release notes are tracked in [`CHANGELOG.md`](./CHANGELOG.md).
 ---
 
 ## Screens and Controls
+
+![Super Tab Out dashboard](./store-assets/screenshot-1-dashboard.jpg)
 
 The page header keeps the product name, greeting, and date visible without showing an extra app icon. This keeps the new tab page clean while the browser extension icon remains available in Chrome or Edge UI.
 
@@ -76,6 +79,16 @@ Available themes:
 | Matcha desk | Calm green reading mode |
 | Ember slate | Dark slate with warm energy |
 | Lavender mint | Light lavender with mint |
+
+Additional release screenshots:
+
+| Chrome Groups | Privacy Mode |
+| --- | --- |
+| ![Chrome Tab Groups view](./store-assets/screenshot-2-groups.jpg) | ![Privacy mode](./store-assets/screenshot-3-privacy.jpg) |
+
+| Theme Picker | Chinese UI |
+| --- | --- |
+| ![Theme picker](./store-assets/screenshot-4-themes.jpg) | ![Chinese interface](./store-assets/screenshot-5-chinese.jpg) |
 
 ---
 
@@ -190,6 +203,7 @@ The search pill uses one local index for open tabs, Chrome group titles, saved-f
 The Side Panel keeps Super Tab Out available while you stay on the current page:
 
 - search open tabs, saved-for-later items, and saved sessions
+- open the docked Command Center from the new-tab dashboard
 - jump to a tab, save it for later, or close it
 - clean duplicates while keeping one copy
 - restore browser-level recently closed tabs/windows via `chrome.sessions`
@@ -261,8 +275,8 @@ Privacy mode does not provide a web search box or change the browser search prov
 
 Store upload packages are generated into `dist/` only:
 
-- `dist/super-tab-out-chrome-1.0.1.zip`
-- `dist/super-tab-out-edge-1.0.1.zip`
+- `dist/super-tab-out-chrome-1.0.2.zip`
+- `dist/super-tab-out-edge-1.0.2.zip`
 
 ---
 

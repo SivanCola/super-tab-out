@@ -612,10 +612,12 @@ const UI_COPY = {
     focusThisTab: 'Jump to this tab',
     expandHiddenTabs: 'Show hidden tabs',
     dismiss: 'Dismiss',
-    ungroup: 'Ungroup tabs',
+    ungroup: 'Ungroup',
     createGroup: 'Create group',
     renameGroup: 'Rename',
-    recolorGroup: 'Color',
+    recolorGroup: 'Change color',
+    groupActions: 'Group actions',
+    moreActions: 'More actions',
     groupColorPickerLabel: 'Group color',
     groupColorCurrent: 'Current',
     groupColorGrey: 'Grey',
@@ -629,11 +631,10 @@ const UI_COPY = {
     groupColorOrange: 'Orange',
     collapseGroup: 'Collapse',
     expandGroup: 'Expand',
-    saveGroup: 'Save as session',
+    saveGroup: 'Save session',
     restoreSession: 'Restore',
     deleteSession: 'Delete',
-    confirmDeleteSession: 'Delete this saved session?',
-    confirmClearArchive: ({ count }) => `Clear ${count} archived item${count !== 1 ? 's' : ''}? This cannot be undone.`,
+    undo: 'Undo',
     savedSessionTabs: ({ count }) => `${count} tab${count !== 1 ? 's' : ''}`,
     noResults: 'No results',
     inboxZeroTitle: 'Inbox zero, but for tabs.',
@@ -672,8 +673,10 @@ const UI_COPY = {
     toastSessionSaved: 'Session saved',
     toastSessionRestored: 'Session restored as a Chrome tab group',
     toastSessionRestoreFailed: 'Could not restore saved session',
-    toastSessionDeleted: 'Saved session deleted',
+    toastSessionDeleted: ({ title }) => `Deleted "${title}"`,
+    toastSessionRestoredFromUndo: 'Saved session restored',
     toastArchiveCleared: ({ count }) => `Cleared ${count} archived item${count !== 1 ? 's' : ''}`,
+    toastArchiveRestored: ({ count }) => `Restored ${count} archived item${count !== 1 ? 's' : ''}`,
     toastStorageQuota: 'Local storage is full. Archive or remove saved items, then try again.',
     toastStorageFailed: 'Could not update local storage.',
   },
@@ -766,7 +769,9 @@ const UI_COPY = {
     ungroup: '解除分组',
     createGroup: '创建分组',
     renameGroup: '重命名',
-    recolorGroup: '颜色',
+    recolorGroup: '更改颜色',
+    groupActions: '分组操作',
+    moreActions: '更多操作',
     groupColorPickerLabel: '分组颜色',
     groupColorCurrent: '当前',
     groupColorGrey: '灰色',
@@ -780,11 +785,10 @@ const UI_COPY = {
     groupColorOrange: '橙色',
     collapseGroup: '折叠',
     expandGroup: '展开',
-    saveGroup: '保存为会话',
+    saveGroup: '保存会话',
     restoreSession: '恢复',
     deleteSession: '删除',
-    confirmDeleteSession: '删除这个已保存会话？',
-    confirmClearArchive: ({ count }) => `清空 ${count} 个归档条目？此操作无法撤销。`,
+    undo: '撤销',
     savedSessionTabs: ({ count }) => `${count} 个标签页`,
     noResults: '没有结果',
     inboxZeroTitle: '标签页清空了。',
@@ -823,8 +827,10 @@ const UI_COPY = {
     toastSessionSaved: '会话已保存',
     toastSessionRestored: '已恢复为 Chrome 标签分组',
     toastSessionRestoreFailed: '无法恢复保存的会话',
-    toastSessionDeleted: '已删除保存的会话',
+    toastSessionDeleted: ({ title }) => `已删除「${title}」`,
+    toastSessionRestoredFromUndo: '已恢复保存的会话',
     toastArchiveCleared: ({ count }) => `已清空 ${count} 个归档条目`,
+    toastArchiveRestored: ({ count }) => `已恢复 ${count} 个归档条目`,
     toastStorageQuota: '本地存储已满。请归档或删除一些已保存条目后重试。',
     toastStorageFailed: '无法更新本地存储。',
   },
@@ -1006,6 +1012,17 @@ async function removeSavedSession(id) {
   return nextSessions.length !== currentSessions.length;
 }
 
+async function restoreSavedSession(session, index = 0) {
+  const sessions = await getSavedSessions();
+  if (!session?.id || sessions.some(item => item.id === session.id)) return false;
+  const nextSessions = sessions.slice();
+  const insertIndex = Math.max(0, Math.min(Number(index) || 0, nextSessions.length));
+  nextSessions.splice(insertIndex, 0, session);
+  if (StorageService?.setSavedSessions) await StorageService.setSavedSessions(nextSessions);
+  else await chrome.storage.local.set({ savedSessions: nextSessions });
+  return true;
+}
+
 async function recordActivity(event) {
   try {
     if (StorageService?.recordActivity) await StorageService.recordActivity(event);
@@ -1108,6 +1125,24 @@ async function clearArchivedSavedTabs() {
   const next = current.filter(tab => !tab.completed);
   await chrome.storage.local.set({ deferred: next });
   return current.length - next.length;
+}
+
+async function restoreArchivedSavedTabs(archivedTabs) {
+  const archived = Array.isArray(archivedTabs) ? archivedTabs : [];
+  if (archived.length === 0) return 0;
+
+  const current = StorageService?.getDeferred
+    ? await StorageService.getDeferred()
+    : ((await chrome.storage.local.get('deferred')).deferred || []);
+  const currentList = Array.isArray(current) ? current : [];
+  const existingIds = new Set(currentList.map(tab => tab.id).filter(Boolean));
+  const toRestore = archived.filter(tab => tab?.id && !existingIds.has(tab.id));
+  if (toRestore.length === 0) return 0;
+
+  const next = [...currentList, ...toRestore];
+  if (StorageService?.setDeferred) await StorageService.setDeferred(next);
+  else await chrome.storage.local.set({ deferred: next });
+  return toRestore.length;
 }
 
 
@@ -1272,11 +1307,45 @@ function animateCardOut(card) {
  *
  * Brief pop-up notification at the bottom of the screen.
  */
-function showToast(message) {
+let toastHideTimer = null;
+let toastActionCleanup = null;
+
+function showToast(message, options = {}) {
   const toast = document.getElementById('toast');
-  document.getElementById('toastText').textContent = message;
+  const text = document.getElementById('toastText');
+  if (!toast || !text) return;
+
+  if (toastHideTimer) clearTimeout(toastHideTimer);
+  if (typeof toastActionCleanup === 'function') toastActionCleanup();
+  toastActionCleanup = null;
+
+  text.textContent = message;
+  toast.querySelector('.toast-action')?.remove();
+
+  if (options.actionLabel && typeof options.onAction === 'function') {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'toast-action';
+    button.textContent = options.actionLabel;
+    const handleAction = async () => {
+      button.disabled = true;
+      if (toastHideTimer) clearTimeout(toastHideTimer);
+      toast.classList.remove('visible');
+      try { await options.onAction(); } catch (err) {
+        console.error('[tab-out] Toast action failed:', err);
+        showToast(tr('toastStorageFailed'));
+      }
+    };
+    button.addEventListener('click', handleAction);
+    toastActionCleanup = () => button.removeEventListener('click', handleAction);
+    toast.appendChild(button);
+  }
+
   toast.classList.add('visible');
-  setTimeout(() => toast.classList.remove('visible'), 2500);
+  toastHideTimer = setTimeout(() => {
+    toast.classList.remove('visible');
+    toastHideTimer = null;
+  }, options.duration || (options.actionLabel ? 7000 : 2500));
 }
 
 function initStorageErrorToasts() {
@@ -1654,6 +1723,7 @@ const ICONS = {
   close:   `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>`,
   archive: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" /></svg>`,
   focus:   `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" /></svg>`,
+  more:    `<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M5 10.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm7 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm7 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z" /></svg>`,
 };
 
 
@@ -2211,6 +2281,38 @@ function toggleGroupColorPicker(button, { focusSelected = false } = {}) {
   if (!wasOpen) setGroupColorPickerOpen(control, true, { focusSelected });
 }
 
+function closeGroupActionMenus({ restoreFocus = false } = {}) {
+  let focusTarget = null;
+  document.querySelectorAll('.group-action-menu-control.is-open').forEach(control => {
+    const button = control.querySelector('.group-action-menu-btn');
+    const menu = control.querySelector('.group-action-menu');
+    if (restoreFocus && control.contains(document.activeElement)) focusTarget = button;
+    control.classList.remove('is-open');
+    if (menu) menu.hidden = true;
+    if (button) button.setAttribute('aria-expanded', 'false');
+  });
+  if (focusTarget) focusTarget.focus();
+}
+
+function toggleGroupActionMenu(button, { focusFirst = false } = {}) {
+  const control = button?.closest('.group-action-menu-control');
+  const menu = control?.querySelector('.group-action-menu');
+  if (!control || !menu) return;
+
+  const wasOpen = control.classList.contains('is-open');
+  closeGroupActionMenus();
+  closeGroupColorPickers();
+
+  if (wasOpen) return;
+  control.classList.add('is-open');
+  menu.hidden = false;
+  button.setAttribute('aria-expanded', 'true');
+  if (focusFirst) {
+    const firstItem = menu.querySelector('button,[tabindex]:not([tabindex="-1"])');
+    firstItem?.focus();
+  }
+}
+
 function updateGroupColorControlState(groupId, colorName) {
   const normalized = normalizeChromeGroupColor(colorName);
   const colorHex = CHROME_GROUP_COLORS[normalized];
@@ -2318,16 +2420,37 @@ function renderTabGroupCard(groupInfo, tabs) {
     ? `<span class="open-tabs-badge dupe-count-badge" style="color:var(--accent-amber);background:rgba(200,113,58,0.08);">${escapeHtml(tr('duplicates', { count: totalExtras }))}</span>`
     : '';
 
+  const collapseLabel = groupInfo.collapsed ? tr('expandGroup') : tr('collapseGroup');
+  const actionsMenuId = `group-actions-menu-${groupInfo.id}`;
+  const headerActionsHtml = `
+    <div class="mission-top-actions">
+      <span class="group-action-menu-control">
+        <button class="icon-action-btn group-action-menu-btn"
+                data-action="toggle-group-actions-menu"
+                data-group-id="${groupInfo.id}"
+                aria-haspopup="menu"
+                aria-expanded="false"
+                aria-controls="${actionsMenuId}"
+                title="${escapeHtml(tr('moreActions'))}"
+                aria-label="${escapeHtml(tr('groupActions'))}">
+          ${ICONS.more}
+        </button>
+        <span class="group-action-menu" id="${actionsMenuId}" role="menu" aria-label="${escapeHtml(tr('groupActions'))}" hidden>
+          <button class="group-menu-item" role="menuitem" data-action="rename-group" data-group-id="${groupInfo.id}">${escapeHtml(tr('renameGroup'))}</button>
+          ${buildGroupColorPicker(groupInfo)}
+          <button class="group-menu-item" role="menuitem" data-action="toggle-group-collapsed" data-group-id="${groupInfo.id}" data-collapsed="${groupInfo.collapsed ? 'true' : 'false'}">${escapeHtml(collapseLabel)}</button>
+          <button class="group-menu-item" role="menuitem" data-action="save-group-session" data-group-id="${groupInfo.id}">${escapeHtml(tr('saveGroup'))}</button>
+          <span class="group-menu-separator" aria-hidden="true"></span>
+          <button class="group-menu-item" role="menuitem" data-action="ungroup-tabs" data-group-id="${groupInfo.id}">${escapeHtml(tr('ungroup'))}</button>
+        </span>
+      </span>
+    </div>`;
+
   let actionsHtml = `
     <button class="action-btn close-tabs" data-action="close-group-tabs" data-group-id="${groupInfo.id}">
       ${ICONS.close}
       ${escapeHtml(tr('closeAllTabs', { count: tabCount }))}
-    </button>
-    <button class="action-btn" data-action="rename-group" data-group-id="${groupInfo.id}">${escapeHtml(tr('renameGroup'))}</button>
-    ${buildGroupColorPicker(groupInfo)}
-    <button class="action-btn" data-action="toggle-group-collapsed" data-group-id="${groupInfo.id}" data-collapsed="${groupInfo.collapsed ? 'true' : 'false'}">${escapeHtml(groupInfo.collapsed ? tr('expandGroup') : tr('collapseGroup'))}</button>
-    <button class="action-btn" data-action="save-group-session" data-group-id="${groupInfo.id}">${escapeHtml(tr('saveGroup'))}</button>
-    <button class="action-btn" data-action="ungroup-tabs" data-group-id="${groupInfo.id}">${escapeHtml(tr('ungroup'))}</button>`;
+    </button>`;
 
   if (hasDupes) {
     const dupeUrlsEncoded = dupeUrls.map(([url]) => encodeURIComponent(url)).join(',');
@@ -2343,8 +2466,8 @@ function renderTabGroupCard(groupInfo, tabs) {
       <div class="mission-content">
         <div class="mission-top">
           <span class="mission-name">${escapeHtml(name)}</span>
-          ${tabBadge}
-          ${dupeBadge}
+          <span class="mission-top-badges">${tabBadge}${dupeBadge}</span>
+          ${headerActionsHtml}
         </div>
         <div class="mission-pages">${pageChips}</div>
         <div class="actions">${actionsHtml}</div>
@@ -2746,6 +2869,8 @@ document.addEventListener('click', async (e) => {
   if (!actionEl) return;
 
   const action = actionEl.dataset.action;
+  const isGroupMenuColorAction = action === 'toggle-group-color-picker' || action === 'set-group-color';
+  if (actionEl.closest('.group-action-menu') && !isGroupMenuColorAction) closeGroupActionMenus();
 
   // ---- Switch color theme ----
   if (action === 'set-theme') {
@@ -2784,6 +2909,13 @@ document.addEventListener('click', async (e) => {
   if (action === 'toggle-font-menu') {
     setThemeMenuOpen(false);
     toggleFontMenu();
+    return;
+  }
+
+  // ---- Open/close Chrome tab group overflow menu ----
+  if (action === 'toggle-group-actions-menu') {
+    e.stopPropagation();
+    toggleGroupActionMenu(actionEl, { focusFirst: e.detail === 0 });
     return;
   }
 
@@ -2946,17 +3078,23 @@ document.addEventListener('click', async (e) => {
     return;
   }
 
-  // ---- Clear archived saved tabs permanently ----
+  // ---- Clear archived saved tabs, with a short undo window ----
   if (action === 'clear-archive') {
     const { archived } = await getSavedTabs();
     if (archived.length === 0) return;
-    if (!window.confirm(tr('confirmClearArchive', { count: archived.length }))) return;
 
     actionEl.disabled = true;
     try {
       const removed = await clearArchivedSavedTabs();
       await renderDeferredColumn();
-      showToast(tr('toastArchiveCleared', { count: removed }));
+      showToast(tr('toastArchiveCleared', { count: removed }), {
+        actionLabel: tr('undo'),
+        onAction: async () => {
+          const restored = await restoreArchivedSavedTabs(archived);
+          await renderDeferredColumn();
+          showToast(tr('toastArchiveRestored', { count: restored }));
+        },
+      });
     } catch (err) {
       console.error('[tab-out] Failed to clear archive:', err);
       actionEl.disabled = false;
@@ -2987,11 +3125,15 @@ document.addEventListener('click', async (e) => {
     return;
   }
 
-  // ---- Delete a saved session from local storage ----
+  // ---- Delete a saved session from local storage, with undo ----
   if (action === 'delete-saved-session') {
     const id = actionEl.dataset.sessionId;
     if (!id) return;
-    if (!window.confirm(tr('confirmDeleteSession'))) return;
+    const sessions = await getSavedSessions();
+    const sessionIndex = sessions.findIndex(item => item.id === id);
+    const session = sessions[sessionIndex];
+    if (!session) return;
+
     actionEl.disabled = true;
     await removeSavedSession(id);
 
@@ -3002,7 +3144,15 @@ document.addEventListener('click', async (e) => {
     } else {
       await renderSavedSessionsCard();
     }
-    showToast(tr('toastSessionDeleted'));
+    const sessionTitle = session.group || session.name || session.title || tr('savedSessionsTitle');
+    showToast(tr('toastSessionDeleted', { title: sessionTitle }), {
+      actionLabel: tr('undo'),
+      onAction: async () => {
+        const restored = await restoreSavedSession(session, sessionIndex);
+        if (restored) await renderSavedSessionsCard();
+        showToast(tr('toastSessionRestoredFromUndo'));
+      },
+    });
     return;
   }
 
@@ -3765,7 +3915,7 @@ function setCommandDrawerOpen(open, { view = null } = {}) {
 document.addEventListener('click', (event) => {
   const btn = event.target.closest('[data-command-dock-view]');
   const drawer = document.getElementById('commandDrawer');
-  if (!btn || !drawer?.contains(btn)) return;
+  if (!btn || !drawer) return;
   const view = btn.dataset.commandDockView;
   const isOpen = document.body.classList.contains('command-drawer-open');
   const isPrimaryToggle = btn.id === 'commandDockToolsBtn';
@@ -3860,6 +4010,11 @@ document.addEventListener('keydown', (e) => {
     closeGroupColorPickers({ restoreFocus: true });
     return;
   }
+  if (document.querySelector('.group-action-menu-control.is-open')) {
+    e.preventDefault();
+    closeGroupActionMenus({ restoreFocus: true });
+    return;
+  }
   const themePicker = document.getElementById('themePicker');
   if (themePicker?.classList.contains('theme-menu-open')) {
     e.preventDefault();
@@ -3894,6 +4049,7 @@ document.getElementById('privacySettingsBtn')?.addEventListener('click', () => {
 
 document.addEventListener('click', (e) => {
   if (!e.target.closest('.group-color-control')) closeGroupColorPickers();
+  if (!e.target.closest('.group-action-menu-control')) closeGroupActionMenus();
 
   const themePicker = document.getElementById('themePicker');
   if (themePicker && !themePicker.contains(e.target)) setThemeMenuOpen(false);

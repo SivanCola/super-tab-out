@@ -509,6 +509,15 @@ function seedScenarioInExtension(config) {
       return groupId;
     }
 
+    async function openDashboard(windowId) {
+      await chrome.tabs.create({
+        windowId,
+        url: chrome.runtime.getURL('index.html'),
+        active: true,
+      });
+      await sleep(120);
+    }
+
     async function cleanupSeededTabs() {
       if (!config.cleanup) return 0;
       const [tabs, tabGroups] = await Promise.all([
@@ -566,6 +575,7 @@ function seedScenarioInExtension(config) {
     const recentTab = await createTab(windowId, config.recentlyClosedUrl, { delay: 350 });
     await sleep(350);
     await chrome.tabs.remove(recentTab.id);
+    await openDashboard(windowId);
 
     return {
       seedRunId: config.seedRunId,

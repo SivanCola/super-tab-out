@@ -149,15 +149,15 @@
     const toClose = [];
 
     for (const url of urls || []) {
-      const matching = allTabs.filter(tab => tab.url === url);
+      const matching = allTabs.filter(tab => tab.url === url && !tab.pinned);
       if (keepOne) {
         const keep = matching.find(tab => tab.active) || matching[0];
         for (const tab of matching) {
-          if (keep && tab.id !== keep.id && !tab.pinned) toClose.push(tab.id);
+          if (keep && tab.id !== keep.id) toClose.push(tab.id);
         }
       } else {
         for (const tab of matching) {
-          if (!tab.pinned) toClose.push(tab.id);
+          toClose.push(tab.id);
         }
       }
     }
@@ -235,11 +235,12 @@
       .map((tab, index) => ({
         url: tab.url,
         title: typeof tab.title === 'string' ? tab.title : tab.url,
+        windowId: Number.isFinite(Number(tab.windowId)) ? Number(tab.windowId) : 0,
         index: Number.isFinite(Number(tab.index)) ? Number(tab.index) : index,
         groupTitle: typeof tab.groupTitle === 'string' ? tab.groupTitle : '',
         groupColor: typeof tab.groupColor === 'string' ? tab.groupColor : '',
       }))
-      .sort((a, b) => a.index - b.index);
+      .sort((a, b) => a.windowId === b.windowId ? a.index - b.index : a.windowId - b.windowId);
   }
 
   async function restoreSavedSession(session, options = {}) {

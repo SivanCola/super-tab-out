@@ -101,7 +101,6 @@
 
   let lang = getLanguage();
   let selectedToolId = new URLSearchParams(location.search).get('tool') || 'json';
-  let favorites = [];
   let stateSaveTimer = null;
   let lastResult = null;
   let resultView = 'preview';
@@ -159,10 +158,6 @@
       : `<span class="tool-icon-fallback">${escapeHtml(tool.id.slice(0, 2).toUpperCase())}</span>`;
   }
 
-  async function loadLists() {
-    favorites = await Tools.getFavorites();
-  }
-
   function renderList(container, tools, emptyText) {
     container.innerHTML = tools.map(tool => `
       <button class="tools-list-button${tool.id === selectedToolId ? ' active' : ''}" style="--tool-accent: ${escapeHtml(accentColor(tool))}" data-tool-id="${escapeHtml(tool.id)}">
@@ -178,9 +173,7 @@
   function renderToolLists() {
     const query = $('#toolSearchPage').value.trim();
     const all = Tools.searchTools(query, { lang });
-    const byId = new Map(Tools.getTools({ lang }).map(tool => [tool.id, tool]));
     renderList($('#toolsList'), all, pageTr('noTools'));
-    renderList($('#toolsFavorites'), favorites.map(id => byId.get(id)).filter(Boolean), pageTr('noFavorites'));
   }
 
   function applyTranslations() {
@@ -253,8 +246,6 @@
     $('#toolCategory').textContent = `${pageTr('localTool')} · ${tool.categoryLabel}`;
     $('#toolTitle').textContent = tool.title;
     $('#toolDescription').textContent = tool.description;
-    $('#favoriteToolBtn').textContent = favorites.includes(tool.id) ? pageTr('unfavorite') : pageTr('favorite');
-    $('#favoriteToolBtn').classList.toggle('primary', favorites.includes(tool.id));
     renderActions(tool, actionOverride);
     renderExamples(tool);
 
@@ -330,7 +321,6 @@
       error: !result.ok,
       action: actionId,
     });
-    await loadLists();
     renderToolLists();
   }
 
@@ -544,14 +534,6 @@
     toast(pageTr('outputDownloaded'));
   }
 
-  async function toggleFavorite() {
-    const tool = currentTool();
-    favorites = await Tools.setFavorite(tool.id, !favorites.includes(tool.id));
-    $('#favoriteToolBtn').textContent = favorites.includes(tool.id) ? pageTr('unfavorite') : pageTr('favorite');
-    $('#favoriteToolBtn').classList.toggle('primary', favorites.includes(tool.id));
-    renderToolLists();
-  }
-
   function clearTool() {
     $('#toolInput').value = '';
     $('#toolOutput').value = '';
@@ -602,7 +584,6 @@
   $('#useCurrentUrlBtn').addEventListener('click', useCurrentUrl);
   $('#copyToolOutputBtn').addEventListener('click', copyOutput);
   $('#downloadToolOutputBtn').addEventListener('click', downloadOutput);
-  $('#favoriteToolBtn').addEventListener('click', toggleFavorite);
   $('#clearToolBtn').addEventListener('click', clearTool);
   window.addEventListener('storage', async (event) => {
     if (event.key !== LANGUAGE_KEY) return;
@@ -612,7 +593,6 @@
 
   (async () => {
     applyTranslations();
-    await loadLists();
     const params = new URLSearchParams(location.search);
     sourceUrl = params.get('source') || params.get('input') || '';
     await selectTool(params.get('tool') || selectedToolId, {

@@ -118,6 +118,23 @@ function checkIndexScripts() {
   ]);
 }
 
+function checkCommandDockContracts() {
+  const indexHtml = readFileSync(join(extensionDir, 'index.html'), 'utf8');
+  const sidepanelJs = readFileSync(join(extensionDir, 'sidepanel.js'), 'utf8');
+  const dockIndex = indexHtml.indexOf('id="commandDockFavorites"');
+  const drawerIndex = indexHtml.indexOf('id="commandDrawer"');
+
+  if (dockIndex !== -1 && drawerIndex !== -1 && dockIndex < drawerIndex) {
+    if (!sidepanelJs.includes("actionEl.closest('.command-dock-rail')")) {
+      fail('sidepanel.js must allow command dock actions rendered outside commandDrawer');
+    }
+  }
+
+  if (sidepanelJs.includes("const DOCK_BOTTOM_QUERY = '(min-width: 0px)'")) {
+    fail('sidepanel.js DOCK_BOTTOM_QUERY must not force desktop dock sorting to horizontal');
+  }
+}
+
 function checkDistZip(zipPath) {
   if (!existsSync(zipPath)) return;
   const result = spawnSync('unzip', ['-Z1', zipPath], { encoding: 'utf8' });
@@ -147,9 +164,10 @@ function checkDistZip(zipPath) {
 async function main() {
   checkManifest();
   checkIndexScripts();
+  checkCommandDockContracts();
   await checkSyntax();
-  checkDistZip(join(root, 'dist/super-tab-out-chrome-1.0.1.zip'));
-  checkDistZip(join(root, 'dist/super-tab-out-edge-1.0.1.zip'));
+  checkDistZip(join(root, 'dist/super-tab-out-chrome-1.0.2.zip'));
+  checkDistZip(join(root, 'dist/super-tab-out-edge-1.0.2.zip'));
 
   if (failures.length > 0) {
     console.error('Extension validation failed:');

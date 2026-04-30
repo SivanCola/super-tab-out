@@ -47,6 +47,16 @@ async function openSidePanel(tab) {
   }
 }
 
+async function configureActionClickBehavior() {
+  try {
+    await chrome.sidePanel?.setPanelBehavior?.({ openPanelOnActionClick: false });
+  } catch {}
+}
+
+async function openToolsPage() {
+  await chrome.tabs.create({ url: chrome.runtime.getURL('tools.html?tool=url') });
+}
+
 async function saveCurrentSession(scope = 'all') {
   const tabs = await chrome.tabs.query(scope === 'currentWindow' ? { currentWindow: true } : {});
   const realTabs = tabs.filter(isRealWebTab).sort((a, b) => {
@@ -189,13 +199,17 @@ async function handleOmniboxSelection(text) {
 
 chrome.runtime.onInstalled.addListener(() => {
   updateBadge();
+  configureActionClickBehavior();
   chrome.omnibox.setDefaultSuggestion({
     description: 'Search Super Tab Out tabs, saved items, and sessions. Try "panel" or "save".',
   });
 });
 
-chrome.runtime.onStartup.addListener(updateBadge);
-chrome.action.onClicked.addListener(openSidePanel);
+chrome.runtime.onStartup.addListener(() => {
+  updateBadge();
+  configureActionClickBehavior();
+});
+chrome.action.onClicked.addListener(openToolsPage);
 chrome.tabs.onCreated.addListener(updateBadge);
 chrome.tabs.onRemoved.addListener(updateBadge);
 chrome.tabs.onUpdated.addListener(updateBadge);
@@ -250,4 +264,5 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   return true;
 });
 
+configureActionClickBehavior();
 updateBadge();

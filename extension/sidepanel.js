@@ -12,7 +12,9 @@ let toolFavorites = [];
 let toolRecent = [];
 let toolOrder = [];
 const DOCK_FAVORITE_LIMIT = 8;
-const DOCK_BOTTOM_QUERY = '(max-width: 1023px)';
+const DOCK_NARROW_QUERY = '(max-width: 1279px)';
+const DOCK_COMPACT_QUERY = '(max-width: 560px)';
+const DOCK_BOTTOM_QUERY = '(max-width: 1179px)';
 const DOCK_LONG_PRESS_MS = 450;
 const DOCK_POINTER_TOLERANCE = 6;
 const DOCK_EDIT_IDLE_MS = 4000;
@@ -43,6 +45,7 @@ const toolListSortState = {
   settledId: '',
   settleTimer: null,
 };
+let dockResizeTimer = null;
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -630,6 +633,12 @@ function visibleDockFavoriteIds() {
   return dockFavoriteButtons().map(btn => btn.dataset.toolId).filter(Boolean);
 }
 
+function dockFavoriteLimit() {
+  if (window.matchMedia?.(DOCK_COMPACT_QUERY).matches) return 0;
+  if (window.matchMedia?.(DOCK_NARROW_QUERY).matches) return 3;
+  return DOCK_FAVORITE_LIMIT;
+}
+
 function syncDockSortClasses() {
   const dock = $('#commandDockFavorites');
   const rail = document.querySelector('.command-dock-rail');
@@ -872,7 +881,8 @@ function renderDockFavorites(byId) {
     return;
   }
 
-  const visible = favoriteTools.slice(0, DOCK_FAVORITE_LIMIT);
+  const visibleLimit = dockFavoriteLimit();
+  const visible = favoriteTools.slice(0, visibleLimit);
   const overflowCount = favoriteTools.length - visible.length;
   const favoriteButtons = visible.map(tool => {
     const title = `${tool.title} · ${tool.description}`;
@@ -1065,6 +1075,10 @@ document.addEventListener('click', async (e) => {
 
   const actionEl = e.target.closest('[data-action]');
   if (!actionEl) return;
+
+  const embeddedDrawer = document.getElementById('commandDrawer');
+  if (embeddedDrawer && !embeddedDrawer.contains(actionEl) && !actionEl.closest('.command-dock-rail')) return;
+
   const action = actionEl.dataset.action;
   const url = actionEl.dataset.url;
   if (action === 'focus') await self.SuperTabOutTabs.focusTab(url);
@@ -1108,6 +1122,13 @@ $('#dedupeBtn')?.addEventListener('click', cleanDuplicates);
 $('#newTabBtn')?.addEventListener('click', () => chrome.tabs.create({ url: chrome.runtime.getURL('index.html') }));
 $('#toolSearch')?.addEventListener('input', renderToolsPanel);
 $('#openToolsPageBtn')?.addEventListener('click', () => chrome.tabs.create({ url: chrome.runtime.getURL('tools.html') }));
+window.addEventListener('resize', () => {
+  if (dockResizeTimer) clearTimeout(dockResizeTimer);
+  dockResizeTimer = setTimeout(() => {
+    dockResizeTimer = null;
+    renderToolsPanel();
+  }, 120);
+});
 document.addEventListener('pointerdown', handleDockPointerDown);
 document.addEventListener('pointermove', handleDockPointerMove);
 document.addEventListener('pointerup', handleDockPointerEnd);

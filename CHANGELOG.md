@@ -6,6 +6,8 @@ All notable changes to Super Tab Out are tracked here.
 
 ## Unreleased
 
+## 1.0.2 - 2026-04-30
+
 ### Added
 
 - Added schema-aware storage, tabs, search, actions, and metrics services as the first architecture split for the v1.1 foundation.
@@ -26,6 +28,8 @@ All notable changes to Super Tab Out are tracked here.
 - Extended the new-tab search pill so it filters both tab cards and saved-for-later/archive entries.
 - Updated permissions and privacy documentation for `sidePanel` and `sessions`.
 - Updated privacy documentation for the external favicon toggle.
+- Updated README screenshot galleries and store screenshots for the current Command Center and Tools UI.
+- Bumped the extension, package metadata, validator package targets, and generated Chrome/Edge store packages to `1.0.2`.
 
 ## 1.0.1 - 2026-04-22
 

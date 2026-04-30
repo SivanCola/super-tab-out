@@ -67,6 +67,40 @@ async function testTabsService() {
   await tabs.closeDuplicateTabs(['https://a.test'], true);
   assert.deepEqual(removed, [1]);
 
+  removed.length = 0;
+  global.chrome = {
+    runtime: { id: 'ext' },
+    tabs: {
+      async query() {
+        return [
+          { id: 1, url: 'https://a.test', active: true, pinned: true },
+          { id: 2, url: 'https://a.test', active: false, pinned: false },
+          { id: 3, url: 'https://a.test', active: false, pinned: false },
+        ];
+      },
+      async remove(idsToRemove) {
+        removed.push(...idsToRemove);
+      },
+    },
+  };
+
+  await tabs.closeDuplicateTabs(['https://a.test'], true);
+  assert.deepEqual(removed, [3]);
+
+  assert.deepEqual(tabs.normalizeSessionRestoreTabs({
+    tabs: [
+      { url: 'https://w1-0.test', windowId: 1, index: 0 },
+      { url: 'https://w1-1.test', windowId: 1, index: 1 },
+      { url: 'https://w2-0.test', windowId: 2, index: 0 },
+      { url: 'https://w2-1.test', windowId: 2, index: 1 },
+    ],
+  }).map(tab => tab.url), [
+    'https://w1-0.test',
+    'https://w1-1.test',
+    'https://w2-0.test',
+    'https://w2-1.test',
+  ]);
+
   const createdWindows = [];
   const groupedTabSets = [];
   const updatedGroups = [];
@@ -286,7 +320,7 @@ async function testToolsService() {
   assert.equal(jsonTool.examples.length > 0, true);
   assert.deepEqual(
     tools.getTools({ lang: 'en' }).map(tool => tool.icon),
-    ['json-tree', 'url-search', 'codec-arrows', 'time-ruler', 'qr-grid', 'id-key', 'fingerprint-hash', 'cookie-kv', 'session-export']
+    ['json-tree', 'qr-grid', 'time-ruler', 'url-search', 'codec-arrows', 'id-key', 'fingerprint-hash', 'cookie-kv', 'session-export']
   );
   assert.equal(tools.getToolIconSvg('qr-grid').includes('data-tool-icon="qr-grid"'), true);
   assert.equal(tools.getToolIconSvg('missing').includes('data-tool-icon="tool-default"'), true);
@@ -353,9 +387,9 @@ async function testToolsService() {
   assert.deepEqual(await tools.setFavorite('url', true), ['json', 'url']);
   assert.deepEqual(await tools.setFavoritesOrder(['url', 'json', 'missing', 'url']), ['url', 'json']);
   assert.deepEqual(await tools.getFavorites(), ['url', 'json']);
-  assert.deepEqual((await tools.getToolOrder()).slice(0, 3), ['url', 'json', 'codec']);
-  assert.deepEqual((await tools.setToolOrder(['hash', 'qr', 'missing', 'hash'])).slice(0, 4), ['hash', 'qr', 'json', 'url']);
-  assert.deepEqual((await tools.getToolOrder()).slice(0, 4), ['hash', 'qr', 'json', 'url']);
+  assert.deepEqual((await tools.getToolOrder()).slice(0, 3), ['url', 'json', 'qr']);
+  assert.deepEqual((await tools.setToolOrder(['hash', 'qr', 'missing', 'hash'])).slice(0, 4), ['hash', 'qr', 'json', 'timestamp']);
+  assert.deepEqual((await tools.getToolOrder()).slice(0, 4), ['hash', 'qr', 'json', 'timestamp']);
   await tools.recordRecent('hash');
   await tools.recordRecent('json');
   assert.deepEqual((await tools.getRecent()).map(item => item.id), ['json', 'hash']);

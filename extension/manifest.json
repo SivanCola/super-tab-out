@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Super Tab Out",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A local-first new tab dashboard for organizing open tabs with tab filtering, privacy mode, themes, and tab groups.",
   "permissions": ["tabs", "storage", "tabGroups", "sidePanel", "sessions"],
   "chrome_url_overrides": { "newtab": "index.html" },
