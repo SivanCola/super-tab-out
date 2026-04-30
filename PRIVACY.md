@@ -1,6 +1,6 @@
 # Privacy Policy for Super Tab Out
 
-Last updated: April 20, 2026
+Last updated: May 1, 2026
 
 Super Tab Out is a local-first Chromium extension that replaces the new tab page with a dashboard for organizing open browser tabs.
 
@@ -53,6 +53,8 @@ Super Tab Out does not:
 - run a backend service
 
 The local tools workbench runs inside the extension. Text entered into JSON, URL, encoding, timestamp, QR, UUID/password, hash, cookie, and session export tools is processed locally and is not sent to a remote service.
+
+Super Tab Out's use of information received from Chrome extension APIs adheres to the Chrome Web Store User Data Policy, including the Limited Use requirements.
 
 ## External Requests
 
