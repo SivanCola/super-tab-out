@@ -368,6 +368,11 @@ async function testToolsService() {
   assert.equal(qr.visual.type, 'qr');
   assert.equal(qr.output.startsWith('<svg'), true);
   assert.equal(qr.output.includes('viewBox="0 0'), true);
+  const longQrUrl = 'https://crazyrope-backup.oss-cn-shanghai.aliyuncs.com/app/android_apps/crazyrope-eng-4.1.8-8066-0511-1902.apk';
+  const longQr = await tools.runTool('qr', longQrUrl, { action: 'generate' });
+  assert.equal(longQr.ok, true);
+  assert.equal(longQr.meta.mime, 'image/svg+xml');
+  assert.equal(longQr.visual.textLength, Buffer.byteLength(longQrUrl, 'utf8'));
 
   assert.equal(await tools.md5('abc'), '900150983cd24fb0d6963f7d28e17f72');
   assert.equal((await tools.runTool('hash', 'abc', { action: 'sha1' })).output, 'a9993e364706816aba3e25717850c26c9cd0d89d');

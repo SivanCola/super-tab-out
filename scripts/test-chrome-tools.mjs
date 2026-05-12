@@ -223,6 +223,8 @@ async function main() {
     assert.equal(defaultTheme.firstTheme, 'system');
     assert.equal(defaultTheme.activeLabel, 'Adaptive Glow');
     assert.equal(defaultTheme.storedTheme, null);
+    await page.waitFor('document.querySelector("#statTabs")?.textContent.trim() !== "—"');
+    assert.match(await page.evaluate(`document.querySelector('#statTabs')?.textContent.trim() || ''`), /^\d+$/);
     assert.deepEqual(
       await page.evaluate(`Array.from(document.querySelectorAll('.theme-option[data-theme-name]')).map(btn => btn.dataset.themeName).slice(0, 4)`),
       ['system', 'white', 'material', 'cupertino']
@@ -297,11 +299,32 @@ async function main() {
     page.close();
     page = null;
 
+    page = await openExtensionPage(port, `${extensionBase}/sidepanel.html`);
+    await page.waitFor('document.querySelector("#tabsView") && document.querySelector("#toolsView")');
+    await page.evaluate(`document.querySelector('.panel-tab[data-view="tools"]').click()`);
+    await page.waitFor('document.querySelector("#toolsView").classList.contains("active")');
+    await page.waitFor('document.querySelectorAll("#toolList .tool-directory-card[data-tool-id]").length >= 9');
+    const sidePanelState = await page.evaluate(`({
+      tabsActive: document.querySelector('#tabsView').classList.contains('active'),
+      toolsActive: document.querySelector('#toolsView').classList.contains('active'),
+      hasHealthView: document.querySelector('#healthView') !== null,
+      hasCurrentTabTools: document.querySelectorAll('[data-action="open-tool-current"]').length,
+      firstTools: Array.from(document.querySelectorAll('#toolList .tool-directory-card[data-tool-id]')).map(card => card.dataset.toolId).slice(0, 3)
+    })`);
+    assert.equal(sidePanelState.tabsActive, false);
+    assert.equal(sidePanelState.toolsActive, true);
+    assert.equal(sidePanelState.hasHealthView, false);
+    assert.equal(sidePanelState.hasCurrentTabTools, 3);
+    assert.deepEqual(sidePanelState.firstTools, ['url', 'json', 'codec']);
+    assert.deepEqual(page.errors, []);
+    page.close();
+    page = null;
+
     page = await openExtensionPage(port, `${extensionBase}/tools.html?tool=json`);
     await page.waitFor('document.querySelector("#toolInput")');
     assert.deepEqual(
       await page.evaluate(`Array.from(document.querySelectorAll('#toolsList .tool-icon-svg')).map(svg => svg.dataset.toolIcon)`),
-      ['json-tree', 'url-search', 'codec-arrows', 'time-ruler', 'qr-grid', 'id-key', 'fingerprint-hash', 'cookie-kv', 'session-export']
+      ['json-tree', 'qr-grid', 'time-ruler', 'url-search', 'codec-arrows', 'id-key', 'fingerprint-hash', 'cookie-kv', 'session-export']
     );
 
     await setStorage(page, {

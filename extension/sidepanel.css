@@ -272,60 +272,6 @@ textarea:focus-visible {
   margin-bottom: 8px;
 }
 
-.health-score {
-  background: var(--panel-card);
-  border: 1px solid var(--panel-line);
-  border-radius: 8px;
-  padding: 18px;
-  text-align: center;
-}
-
-.health-number {
-  font-size: 48px;
-  font-weight: 750;
-  color: var(--panel-accent);
-}
-
-.health-label {
-  color: var(--panel-muted);
-}
-
-.metric-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.metric-grid div {
-  background: var(--panel-card);
-  border: 1px solid var(--panel-line);
-  border-radius: 8px;
-  padding: 10px;
-}
-
-.metric-grid strong {
-  display: block;
-  font-size: 20px;
-}
-
-.metric-grid span {
-  font-size: 11px;
-  color: var(--panel-muted);
-}
-
-.compact-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  font-size: 12px;
-}
-
-.achievement {
-  font-size: 12px;
-  border-color: color-mix(in srgb, var(--panel-warm) 40%, var(--panel-line));
-}
-
 .tool-list {
   display: grid;
   gap: 8px;
@@ -466,21 +412,6 @@ textarea:focus-visible {
   border-radius: 8px;
   padding: 10px;
   margin-bottom: 10px;
-}
-
-.qr-box {
-  display: grid;
-  place-items: center;
-  min-height: 180px;
-  margin-top: 10px;
-  border: 1px dashed var(--panel-line);
-  border-radius: 8px;
-  background: white;
-}
-
-.qr-box svg {
-  width: 160px;
-  height: 160px;
 }
 
 .search-match {

@@ -8,6 +8,29 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const extensionDir = join(root, 'extension');
 const failures = [];
+const REQUIRED_ZIP_ENTRIES = [
+  'manifest.json',
+  'background.js',
+  'index.html',
+  'style.css',
+  'theme-init.js',
+  'sidepanel.html',
+  'sidepanel.css',
+  'sidepanel.js',
+  'tools.html',
+  'tools.css',
+  'tools.js',
+  'services/html-service.js',
+  'services/storage-service.js',
+  'services/tabs-service.js',
+  'services/search-service.js',
+  'services/metrics-service.js',
+  'services/tools-service.js',
+  'vendor/qrcodegen.js',
+  'icons/icon16.png',
+  'icons/icon48.png',
+  'icons/icon128.png',
+];
 
 function fail(message) {
   failures.push(message);
@@ -74,7 +97,7 @@ async function checkSyntax() {
   }
 }
 
-function checkHtmlScripts(htmlFile, expectedServices = []) {
+function checkHtmlScripts(htmlFile, expectedScripts = []) {
   const indexPath = join(extensionDir, htmlFile);
   const html = readFileSync(indexPath, 'utf8');
   const scripts = [...html.matchAll(/<script\s+src="([^"]+)"/g)].map(match => match[1]);
@@ -84,11 +107,17 @@ function checkHtmlScripts(htmlFile, expectedServices = []) {
     if (!existsSync(join(extensionDir, script))) fail(`${htmlFile} references missing script: ${script}`);
   }
 
+  let previousIndex = -1;
   const appIndex = scripts.indexOf('app.js');
-  for (const service of expectedServices) {
-    const serviceIndex = scripts.indexOf(service);
-    if (serviceIndex === -1) fail(`${htmlFile} does not load ${service}`);
-    if (appIndex !== -1 && serviceIndex > appIndex) fail(`${service} must load before app.js`);
+  for (const script of expectedScripts) {
+    const scriptIndex = scripts.indexOf(script);
+    if (scriptIndex === -1) {
+      fail(`${htmlFile} does not load ${script}`);
+      continue;
+    }
+    if (scriptIndex <= previousIndex) fail(`${script} loads out of order in ${htmlFile}`);
+    if (appIndex !== -1 && scriptIndex > appIndex) fail(`${script} must load before app.js`);
+    previousIndex = scriptIndex;
   }
 }
 
@@ -99,21 +128,18 @@ function checkIndexScripts() {
     'services/tabs-service.js',
     'services/search-service.js',
     'services/metrics-service.js',
-    'services/actions-service.js',
     'services/tools-service.js',
   ]);
   checkHtmlScripts('sidepanel.html', [
-    'services/html-service.js',
     'services/storage-service.js',
     'services/tabs-service.js',
     'services/search-service.js',
-    'services/metrics-service.js',
     'services/tools-service.js',
   ]);
   checkHtmlScripts('tools.html', [
-    'services/html-service.js',
     'services/storage-service.js',
     'services/tabs-service.js',
+    'vendor/qrcodegen.js',
     'services/tools-service.js',
   ]);
 }
@@ -145,6 +171,9 @@ function checkDistZip(zipPath) {
 
   const entries = result.stdout.split('\n').filter(Boolean);
   if (!entries.includes('manifest.json')) fail(`${relative(root, zipPath)} must contain manifest.json at the ZIP root`);
+  for (const required of REQUIRED_ZIP_ENTRIES) {
+    if (!entries.includes(required)) fail(`${relative(root, zipPath)} is missing required entry: ${required}`);
+  }
 
   const forbidden = [
     '.git/',
@@ -153,21 +182,30 @@ function checkDistZip(zipPath) {
     'config.local.js',
     '.claude/',
     'tools/',
+    'icons/icon-source.png',
+    'icons/icon.svg',
+    'services/actions-service.js',
   ];
   for (const entry of entries) {
     if (forbidden.some(token => entry.includes(token))) {
       fail(`${relative(root, zipPath)} contains forbidden entry: ${entry}`);
     }
+    if (!entry.endsWith('/') && !REQUIRED_ZIP_ENTRIES.includes(entry)) {
+      fail(`${relative(root, zipPath)} contains unexpected entry: ${entry}`);
+    }
   }
 }
 
 async function main() {
+  const manifest = readJson(join(extensionDir, 'manifest.json'));
   checkManifest();
   checkIndexScripts();
   checkCommandDockContracts();
   await checkSyntax();
-  checkDistZip(join(root, 'dist/super-tab-out-chrome-1.0.2.zip'));
-  checkDistZip(join(root, 'dist/super-tab-out-edge-1.0.2.zip'));
+  if (manifest?.version) {
+    checkDistZip(join(root, `dist/super-tab-out-chrome-${manifest.version}.zip`));
+    checkDistZip(join(root, `dist/super-tab-out-edge-${manifest.version}.zip`));
+  }
 
   if (failures.length > 0) {
     console.error('Extension validation failed:');

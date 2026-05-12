@@ -6,6 +6,14 @@ All notable changes to Super Tab Out are tracked here.
 
 ## Unreleased
 
+## 1.0.3 - 2026-05-12
+
+### Changed
+
+- Replaced the limited local QR encoder with a vendored MIT QR generator that supports standard QR versions locally.
+- Added whitelist Chrome/Edge packaging and removed source-only assets and unreachable Side Panel code from release packages.
+- Bumped the extension and package metadata to `1.0.3`, with regenerated Chrome/Edge store packages.
+
 ## 1.0.2 - 2026-04-30
 
 ### Added

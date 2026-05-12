@@ -31,3 +31,11 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+This product includes QR Code generator library by Project Nayuki:
+https://www.nayuki.io/page/qr-code-generator-library
+https://github.com/nayuki/QR-Code-generator
+
+QR Code generator library is licensed under the MIT License. The required
+upstream copyright and permission notice is preserved in
+extension/vendor/qrcodegen.js.

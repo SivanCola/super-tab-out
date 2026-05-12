@@ -56,7 +56,6 @@ const PANEL_COPY = {
     refresh: 'Refresh',
     close: 'Close',
     tabs: 'Tabs',
-    health: 'Health',
     tools: 'Tools',
     searchTools: 'Search tools',
     fullPage: 'Full page',
@@ -88,21 +87,6 @@ const PANEL_COPY = {
     tabSingular: 'tab',
     tabPlural: 'tabs',
     tabWindow: ({ count }) => `${count} tab window`,
-    tabHealth: 'Tab health',
-    openTabs: 'Open tabs',
-    duplicateExtras: 'Duplicate extras',
-    closedThisWeek: 'Closed this week',
-    savedThisWeek: 'Saved this week',
-    topDomains: 'Top domains',
-    achievements: 'Achievements',
-    noDomainStats: 'No domain stats yet',
-    noAchievements: 'No achievements yet.',
-    achievementClosed10: 'Closed 10 tabs',
-    achievementClosed100: 'Closed 100 tabs',
-    achievementSaved10: 'Saved 10 tabs for later',
-    achievementDedupe10: 'Removed 10 duplicate extras',
-    achievementSessionSaver: 'Saved a browsing session',
-    achievementCalmDeck: 'Kept tab health above 90',
     sessionSaved: 'Session saved',
     noDuplicates: 'No duplicates',
     duplicatesCleaned: 'Duplicates cleaned',
@@ -114,7 +98,6 @@ const PANEL_COPY = {
     refresh: '刷新',
     close: '关闭',
     tabs: '标签页',
-    health: '健康',
     tools: '工具',
     searchTools: '搜索工具',
     fullPage: '完整页面',
@@ -146,21 +129,6 @@ const PANEL_COPY = {
     tabSingular: '个标签页',
     tabPlural: '个标签页',
     tabWindow: ({ count }) => `${count} 个标签页窗口`,
-    tabHealth: '标签页健康',
-    openTabs: '打开的标签页',
-    duplicateExtras: '重复项',
-    closedThisWeek: '本周关闭',
-    savedThisWeek: '本周保存',
-    topDomains: '常见域名',
-    achievements: '成就',
-    noDomainStats: '暂无域名统计',
-    noAchievements: '暂无成就。',
-    achievementClosed10: '已关闭 10 个标签页',
-    achievementClosed100: '已关闭 100 个标签页',
-    achievementSaved10: '已稍后保存 10 个标签页',
-    achievementDedupe10: '已移除 10 个重复项',
-    achievementSessionSaver: '已保存一个浏览会话',
-    achievementCalmDeck: '标签页健康保持在 90 分以上',
     sessionSaved: '会话已保存',
     noDuplicates: '没有重复项',
     duplicatesCleaned: '重复项已清理',
@@ -194,7 +162,6 @@ function setAttr(selector, attr, key) {
 function applyPanelTranslations({ rerender = false } = {}) {
   panelLanguage = getPanelLanguage();
   setText('.panel-tab[data-view="tabs"]', 'tabs');
-  setText('.panel-tab[data-view="health"]', 'health');
   setText('.panel-tab[data-view="tools"]', 'tools');
   setAttr('#refreshBtn', 'title', 'refresh');
   setAttr('#refreshBtn', 'aria-label', 'refresh');
@@ -205,20 +172,14 @@ function applyPanelTranslations({ rerender = false } = {}) {
   setText('#saveSessionBtn', 'save');
   setText('#dedupeBtn', 'cleanDuplicates');
   setText('#newTabBtn', 'newTabDashboard');
-  setText('#healthView .health-label', 'tabHealth');
   setAttr('#toolSearch', 'placeholder', 'searchTools');
   setAttr('#toolSearch', 'aria-label', 'searchTools');
   setText('#openToolsPageBtn', 'fullPage');
   document.querySelectorAll('[data-tool-copy]').forEach(el => {
     el.textContent = panelTr(el.dataset.toolCopy);
   });
-  document.querySelectorAll('#healthView .metric-grid span').forEach((el, index) => {
-    el.textContent = [panelTr('openTabs'), panelTr('duplicateExtras'), panelTr('closedThisWeek'), panelTr('savedThisWeek')][index] || el.textContent;
-  });
   document.querySelectorAll('.panel-section-title').forEach(el => {
     if (el.parentElement?.querySelector('#recentList')) el.textContent = panelTr('recentlyClosed');
-    if (el.parentElement?.querySelector('#topDomains')) el.textContent = panelTr('topDomains');
-    if (el.parentElement?.querySelector('#achievements')) el.textContent = panelTr('achievements');
   });
   setPanelView(document.getElementById('commandDrawer')?.getAttribute('data-active-view') || activePanelView());
   if (rerender) renderAll();
@@ -226,7 +187,6 @@ function applyPanelTranslations({ rerender = false } = {}) {
 
 function panelViewTitle(viewName) {
   if (viewName === 'tools') return panelTr('tools');
-  if (viewName === 'health') return panelTr('health');
   return panelTr('tabs');
 }
 
@@ -407,28 +367,6 @@ async function renderRecent() {
         </div>
       </div>`;
   }).join('') || `<div class="recent-card"><div class="recent-meta">${escapeHtml(panelTr('nothingRecentlyClosed'))}</div></div>`;
-}
-
-async function renderHealth() {
-  if (!$('#healthScore')) return;
-  const health = self.SuperTabOutMetrics.calculateTabHealth(openTabs);
-  const stats = await self.SuperTabOutStorage.getActivityStats();
-  const summary = self.SuperTabOutMetrics.summarizeActivity(stats);
-  const achievements = await self.SuperTabOutStorage.unlockAchievements(
-    self.SuperTabOutMetrics.evaluateAchievements(stats, health)
-  );
-
-  $('#healthScore').textContent = health.score;
-  $('#metricTabs').textContent = health.tabCount;
-  $('#metricDupes').textContent = health.duplicateExtras;
-  $('#metricClosed').textContent = summary.closedThisWeek;
-  $('#metricSaved').textContent = summary.savedThisWeek;
-  $('#topDomains').innerHTML = summary.topDomains.map(item =>
-    `<div class="compact-row"><span>${escapeHtml(item.domain)}</span><strong>${item.count}</strong></div>`
-  ).join('') || `<div class="compact-row"><span>${escapeHtml(panelTr('noDomainStats'))}</span></div>`;
-  $('#achievements').innerHTML = achievements.map(labelForAchievement).map(label =>
-    `<div class="achievement">${escapeHtml(label)}</div>`
-  ).join('') || `<div class="achievement">${escapeHtml(panelTr('noAchievements'))}</div>`;
 }
 
 function renderToolCard(tool, { compact = false } = {}) {
@@ -913,17 +851,6 @@ async function renderToolsPanel() {
   syncToolListSortClasses();
 }
 
-function labelForAchievement(id) {
-  return ({
-    'closed-10': panelTr('achievementClosed10'),
-    'closed-100': panelTr('achievementClosed100'),
-    'saved-10': panelTr('achievementSaved10'),
-    'dedupe-10': panelTr('achievementDedupe10'),
-    'session-saver': panelTr('achievementSessionSaver'),
-    'calm-deck': panelTr('achievementCalmDeck'),
-  })[id] || id;
-}
-
 function toolAccentColor(tool) {
   return ({
     blue: '#2563eb',
@@ -939,7 +866,6 @@ function toolAccentColor(tool) {
 async function renderAll() {
   renderResults();
   await renderRecent();
-  if ($('#healthView') && !$('#healthView')?.hidden) await renderHealth();
   await renderToolsPanel();
 }
 
@@ -1001,47 +927,6 @@ async function openTool(toolId, input = '') {
   await chrome.tabs.create({ url: toolPageUrl(toolId, input) });
   if (self.SuperTabOutTools) toolRecent = await self.SuperTabOutTools.getRecent();
   await renderToolsPanel();
-}
-
-function renderQrLike(text) {
-  const value = String(text || '').trim();
-  if (!value) {
-    $('#qrBox').innerHTML = `<div class="result-meta">${escapeHtml(panelTr('qrEmpty'))}</div>`;
-    return;
-  }
-
-  const size = 29;
-  let hash = 2166136261;
-  for (let i = 0; i < value.length; i++) {
-    hash ^= value.charCodeAt(i);
-    hash = Math.imul(hash, 16777619);
-  }
-  function bit(x, y) {
-    const finder = (x < 7 && y < 7) || (x > size - 8 && y < 7) || (x < 7 && y > size - 8);
-    if (finder) return x === 0 || y === 0 || x === 6 || y === 6 || (x > 1 && x < 5 && y > 1 && y < 5);
-    const n = Math.imul(hash ^ (x * 73856093) ^ (y * 19349663), 83492791);
-    return ((n >>> ((x + y) % 16)) & 1) === 1;
-  }
-  const cells = [];
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      if (bit(x, y)) cells.push(`<rect x="${x}" y="${y}" width="1" height="1"/>`);
-    }
-  }
-  $('#qrBox').innerHTML = `<svg viewBox="0 0 ${size} ${size}" role="img" aria-label="${escapeHtml(panelTr('qrAria'))}"><rect width="${size}" height="${size}" fill="white"/><g fill="#111">${cells.join('')}</g></svg>`;
-}
-
-function convertTime() {
-  const raw = $('#timeInput').value.trim();
-  const n = Number(raw);
-  let date = Number.isFinite(n)
-    ? new Date(String(Math.trunc(n)).length <= 10 ? n * 1000 : n)
-    : new Date(raw);
-  if (Number.isNaN(date.getTime())) {
-    $('#timeOutput').textContent = panelTr('invalidDate');
-    return;
-  }
-  $('#timeOutput').textContent = `${date.toISOString()} · ${date.toLocaleString()}`;
 }
 
 document.addEventListener('click', async (e) => {

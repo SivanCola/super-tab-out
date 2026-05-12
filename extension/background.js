@@ -6,7 +6,6 @@
  */
 
 importScripts(
-  'services/html-service.js',
   'services/storage-service.js',
   'services/tabs-service.js',
   'services/search-service.js',

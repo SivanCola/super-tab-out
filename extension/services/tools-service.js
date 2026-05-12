@@ -659,13 +659,14 @@
 
   function runQrTool(input, options = {}) {
     const value = input || 'Super Tab Out';
+    const byteLength = new TextEncoder().encode(String(value)).length;
     const color = normalizeHexColor(options.color || '#111827');
     const svg = makeQrSvg(value, { color });
     return ok(svg, { mime: 'image/svg+xml', labelKey: 'okGenerated' }, {
       visual: {
         type: 'qr',
         svg,
-        textLength: String(value).length,
+        textLength: byteLength,
         color,
       },
     });
@@ -806,253 +807,47 @@
     return /^#[0-9a-fA-F]{6}$/.test(color) ? color : '#111827';
   }
 
+  function getQrCodeLib() {
+    if (global.qrcodegen?.QrCode) return global.qrcodegen;
+    if (typeof require === 'function') {
+      try {
+        const lib = require('../vendor/qrcodegen.js');
+        if (lib?.QrCode) return lib;
+      } catch {}
+    }
+    return null;
+  }
+
   function makeQrLikeSvg(value) {
     return makeQrSvg(value);
   }
 
   function makeQrSvg(value, options = {}) {
-    const bytes = Array.from(new TextEncoder().encode(String(value || '')));
-    const specs = [
-      { version: 1, dataCodewords: 19, eccCodewords: 7 },
-      { version: 2, dataCodewords: 34, eccCodewords: 10 },
-      { version: 3, dataCodewords: 55, eccCodewords: 15 },
-      { version: 4, dataCodewords: 80, eccCodewords: 20 },
-      { version: 5, dataCodewords: 108, eccCodewords: 26 },
-    ];
-    const spec = specs.find(item => bytes.length + 2 <= item.dataCodewords);
-    if (!spec) throw new Error('QR input is too long for the local encoder');
+    const text = String(value || '');
+    const lib = getQrCodeLib();
+    if (!lib?.QrCode) throw new Error('QR encoder is unavailable');
 
-    const data = qrDataCodewords(bytes, spec.dataCodewords);
-    const ecc = qrErrorCorrection(data, spec.eccCodewords);
-    const modules = qrBuildMatrix(spec.version, data.concat(ecc));
-    const size = modules.length;
+    let qr;
+    try {
+      qr = lib.QrCode.encodeText(text, lib.QrCode.Ecc.LOW);
+    } catch (error) {
+      if (/Data too long/i.test(error?.message || '')) {
+        throw new Error('QR input is too long for a standard QR code');
+      }
+      throw error;
+    }
+
+    const size = qr.size;
     const quiet = 4;
     const color = normalizeHexColor(options.color || '#111827');
     const cells = [];
     for (let y = 0; y < size; y++) {
       for (let x = 0; x < size; x++) {
-        if (modules[y][x]) cells.push(`<rect x="${x + quiet}" y="${y + quiet}" width="1" height="1"/>`);
+        if (qr.getModule(x, y)) cells.push(`<rect x="${x + quiet}" y="${y + quiet}" width="1" height="1"/>`);
       }
     }
     const viewSize = size + quiet * 2;
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${viewSize} ${viewSize}" role="img" aria-label="QR code"><rect width="${viewSize}" height="${viewSize}" fill="white"/><g fill="${color}">${cells.join('')}</g></svg>`;
-  }
-
-  function qrDataCodewords(bytes, capacity) {
-    const bits = [];
-    const pushBits = (value, length) => {
-      for (let i = length - 1; i >= 0; i--) bits.push((value >>> i) & 1);
-    };
-    pushBits(0b0100, 4);
-    pushBits(bytes.length, 8);
-    bytes.forEach(byte => pushBits(byte, 8));
-    const maxBits = capacity * 8;
-    for (let i = 0; i < 4 && bits.length < maxBits; i++) bits.push(0);
-    while (bits.length % 8 !== 0) bits.push(0);
-    const words = [];
-    for (let i = 0; i < bits.length; i += 8) {
-      let word = 0;
-      for (let j = 0; j < 8; j++) word = (word << 1) | bits[i + j];
-      words.push(word);
-    }
-    for (let pad = 0; words.length < capacity; pad++) words.push(pad % 2 === 0 ? 0xec : 0x11);
-    return words;
-  }
-
-  function qrErrorCorrection(data, eccCount) {
-    const gen = qrGeneratorPolynomial(eccCount);
-    const result = new Array(eccCount).fill(0);
-    data.forEach(byte => {
-      const factor = byte ^ result.shift();
-      result.push(0);
-      for (let i = 0; i < eccCount; i++) {
-        result[i] ^= qrGfMul(gen[i + 1], factor);
-      }
-    });
-    return result;
-  }
-
-  function qrGeneratorPolynomial(degree) {
-    let poly = [1];
-    for (let i = 0; i < degree; i++) {
-      const next = new Array(poly.length + 1).fill(0);
-      for (let j = 0; j < poly.length; j++) {
-        next[j] ^= qrGfMul(poly[j], 1);
-        next[j + 1] ^= qrGfMul(poly[j], qrGfPow(i));
-      }
-      poly = next;
-    }
-    return poly;
-  }
-
-  function qrGfPow(power) {
-    let value = 1;
-    for (let i = 0; i < power; i++) {
-      value <<= 1;
-      if (value & 0x100) value ^= 0x11d;
-    }
-    return value;
-  }
-
-  function qrGfMul(a, b) {
-    let result = 0;
-    for (let i = 0; i < 8; i++) {
-      if ((b & 1) !== 0) result ^= a;
-      const high = a & 0x80;
-      a = (a << 1) & 0xff;
-      if (high) a ^= 0x1d;
-      b >>>= 1;
-    }
-    return result;
-  }
-
-  function qrBuildMatrix(version, codewords) {
-    const size = version * 4 + 17;
-    const modules = Array.from({ length: size }, () => Array(size).fill(false));
-    const reserved = Array.from({ length: size }, () => Array(size).fill(false));
-    const set = (x, y, dark, reserve = true) => {
-      if (x < 0 || y < 0 || x >= size || y >= size) return;
-      modules[y][x] = dark === true;
-      if (reserve) reserved[y][x] = true;
-    };
-    const finder = (left, top) => {
-      for (let y = -1; y <= 7; y++) {
-        for (let x = -1; x <= 7; x++) {
-          const xx = left + x;
-          const yy = top + y;
-          const inPattern = x >= 0 && x <= 6 && y >= 0 && y <= 6;
-          const dark = inPattern && (x === 0 || x === 6 || y === 0 || y === 6 || (x >= 2 && x <= 4 && y >= 2 && y <= 4));
-          set(xx, yy, dark);
-        }
-      }
-    };
-    finder(0, 0);
-    finder(size - 7, 0);
-    finder(0, size - 7);
-    for (let i = 8; i < size - 8; i++) {
-      set(i, 6, i % 2 === 0);
-      set(6, i, i % 2 === 0);
-    }
-    if (version >= 2) {
-      const pos = 4 * version + 10;
-      qrAlignment(modules, reserved, pos, pos);
-    }
-    set(8, size - 8, true);
-    qrSetFormat(modules, reserved, 0, size);
-
-    const bits = [];
-    codewords.forEach(word => {
-      for (let i = 7; i >= 0; i--) bits.push((word >>> i) & 1);
-    });
-    let bitIndex = 0;
-    let upward = true;
-    for (let right = size - 1; right >= 1; right -= 2) {
-      if (right === 6) right--;
-      for (let vert = 0; vert < size; vert++) {
-        const y = upward ? size - 1 - vert : vert;
-        for (let dx = 0; dx < 2; dx++) {
-          const x = right - dx;
-          if (reserved[y][x]) continue;
-          modules[y][x] = (bits[bitIndex++] || 0) === 1;
-          reserved[y][x] = false;
-        }
-      }
-      upward = !upward;
-    }
-
-    const dataReserved = reserved.map(row => row.slice());
-    let bestMask = 0;
-    let bestScore = Infinity;
-    let bestModules = modules;
-    for (let mask = 0; mask < 8; mask++) {
-      const candidate = modules.map(row => row.slice());
-      for (let y = 0; y < size; y++) {
-        for (let x = 0; x < size; x++) {
-          if (!dataReserved[y][x] && qrMask(mask, x, y)) candidate[y][x] = !candidate[y][x];
-        }
-      }
-      qrSetFormat(candidate, reserved, mask, size);
-      const score = qrPenalty(candidate);
-      if (score < bestScore) {
-        bestScore = score;
-        bestMask = mask;
-        bestModules = candidate;
-      }
-    }
-    qrSetFormat(bestModules, reserved, bestMask, size);
-    return bestModules;
-  }
-
-  function qrAlignment(modules, reserved, cx, cy) {
-    for (let y = -2; y <= 2; y++) {
-      for (let x = -2; x <= 2; x++) {
-        const dark = Math.max(Math.abs(x), Math.abs(y)) !== 1;
-        modules[cy + y][cx + x] = dark;
-        reserved[cy + y][cx + x] = true;
-      }
-    }
-  }
-
-  function qrSetFormat(modules, reserved, mask, size) {
-    const data = (1 << 3) | mask;
-    let bits = data << 10;
-    for (let i = 14; i >= 10; i--) {
-      if (((bits >>> i) & 1) !== 0) bits ^= 0x537 << (i - 10);
-    }
-    const format = ((data << 10) | bits) ^ 0x5412;
-    const bit = i => ((format >>> i) & 1) !== 0;
-    const set = (x, y, dark) => {
-      modules[y][x] = dark;
-      reserved[y][x] = true;
-    };
-    for (let i = 0; i <= 5; i++) set(8, i, bit(i));
-    set(8, 7, bit(6));
-    set(8, 8, bit(7));
-    set(7, 8, bit(8));
-    for (let i = 9; i < 15; i++) set(14 - i, 8, bit(i));
-    for (let i = 0; i < 8; i++) set(size - 1 - i, 8, bit(i));
-    for (let i = 8; i < 15; i++) set(8, size - 15 + i, bit(i));
-  }
-
-  function qrMask(mask, x, y) {
-    if (mask === 0) return (x + y) % 2 === 0;
-    if (mask === 1) return y % 2 === 0;
-    if (mask === 2) return x % 3 === 0;
-    if (mask === 3) return (x + y) % 3 === 0;
-    if (mask === 4) return (Math.floor(y / 2) + Math.floor(x / 3)) % 2 === 0;
-    if (mask === 5) return ((x * y) % 2) + ((x * y) % 3) === 0;
-    if (mask === 6) return (((x * y) % 2) + ((x * y) % 3)) % 2 === 0;
-    return (((x + y) % 2) + ((x * y) % 3)) % 2 === 0;
-  }
-
-  function qrPenalty(modules) {
-    const size = modules.length;
-    let penalty = 0;
-    const scoreLine = (get) => {
-      let runColor = get(0);
-      let runLength = 1;
-      for (let i = 1; i < size; i++) {
-        const color = get(i);
-        if (color === runColor) runLength++;
-        else {
-          if (runLength >= 5) penalty += runLength - 2;
-          runColor = color;
-          runLength = 1;
-        }
-      }
-      if (runLength >= 5) penalty += runLength - 2;
-    };
-    for (let y = 0; y < size; y++) scoreLine(x => modules[y][x]);
-    for (let x = 0; x < size; x++) scoreLine(y => modules[y][x]);
-    for (let y = 0; y < size - 1; y++) {
-      for (let x = 0; x < size - 1; x++) {
-        const color = modules[y][x];
-        if (color === modules[y][x + 1] && color === modules[y + 1][x] && color === modules[y + 1][x + 1]) penalty += 3;
-      }
-    }
-    const dark = modules.flat().filter(Boolean).length;
-    penalty += Math.floor(Math.abs((dark * 20) / (size * size) - 10)) * 10;
-    return penalty;
   }
 
   function md5(input) {

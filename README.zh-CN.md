@@ -256,8 +256,8 @@ Super Tab Out 采用本地优先设计。
 
 商店上传包只生成在 `dist/` 目录：
 
-- `dist/super-tab-out-chrome-1.0.2.zip`
-- `dist/super-tab-out-edge-1.0.2.zip`
+- `dist/super-tab-out-chrome-1.0.3.zip`
+- `dist/super-tab-out-edge-1.0.3.zip`
 
 ---
 

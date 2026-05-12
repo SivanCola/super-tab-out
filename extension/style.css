@@ -2892,9 +2892,7 @@ body.command-drawer-open .command-drawer {
 }
 
 .command-drawer .result-list,
-.command-drawer .recent-list,
-.command-drawer .compact-list,
-.command-drawer .achievement-list {
+.command-drawer .recent-list {
   display: grid;
   gap: 8px;
   margin-top: 12px;
@@ -2902,11 +2900,7 @@ body.command-drawer-open .command-drawer {
 
 .command-drawer .result-card,
 .command-drawer .recent-card,
-.command-drawer .compact-row,
-.command-drawer .achievement,
-.command-drawer .tool-card,
-.command-drawer .health-score,
-.command-drawer .metric-grid div {
+.command-drawer .tool-card {
   background: var(--card-bg);
   border: 1px solid var(--hairline);
   border-radius: 8px;
@@ -2951,50 +2945,6 @@ body.command-drawer-open .command-drawer {
   font-weight: 700;
   color: var(--muted);
   margin-bottom: 8px;
-}
-
-.command-drawer .health-score {
-  padding: 18px;
-  text-align: center;
-}
-
-.command-drawer .health-number {
-  font-size: 48px;
-  font-weight: 750;
-  color: var(--accent-slate);
-}
-
-.command-drawer .health-label {
-  color: var(--muted);
-}
-
-.command-drawer .metric-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.command-drawer .metric-grid strong {
-  display: block;
-  font-size: 20px;
-}
-
-.command-drawer .metric-grid span {
-  font-size: 11px;
-  color: var(--muted);
-}
-
-.command-drawer .compact-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  font-size: 12px;
-}
-
-.command-drawer .achievement {
-  font-size: 12px;
-  border-color: color-mix(in srgb, var(--accent-amber) 40%, var(--hairline));
 }
 
 .command-drawer .tool-list {
