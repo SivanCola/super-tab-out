@@ -7,7 +7,7 @@
 <h3>The Local-First New Tab Dashboard for Chrome, Edge & Brave</h3>
 
 <p>
-  <img alt="version v1.0.5" src="https://img.shields.io/badge/version-v1.0.5-2388d9?labelColor=555555">
+  <img alt="version v1.0.7" src="https://img.shields.io/badge/version-v1.0.7-2388d9?labelColor=555555">
   <img alt="platform Chrome Edge Brave" src="https://img.shields.io/badge/platform-Chrome%20%7C%20Edge%20%7C%20Brave-9a9a9a?labelColor=555555">
   <img alt="built with MV3 and Vanilla JS" src="https://img.shields.io/badge/built%20with-MV3%20%2B%20Vanilla%20JS-ff7a3d?labelColor=555555">
   <img alt="license Apache 2.0" src="https://img.shields.io/badge/license-Apache--2.0-35c52a?labelColor=555555">
@@ -273,10 +273,8 @@ No Google Fonts are used. Fonts come from system font stacks.
 
 Privacy mode does not provide a web search box or change the browser search provider.
 
-Store upload packages are generated into `dist/` only:
-
-- `dist/super-tab-out-chrome-1.0.5.zip`
-- `dist/super-tab-out-edge-1.0.5.zip`
+Store upload packages are generated locally into `dist/` with `npm run package`.
+The ZIP files are intentionally ignored by Git and should be uploaded to the Chrome Web Store / Edge Add-ons from the local workspace, not committed to GitHub.
 
 ---
 

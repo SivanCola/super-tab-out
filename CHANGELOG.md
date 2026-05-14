@@ -6,6 +6,18 @@ All notable changes to Super Tab Out are tracked here.
 
 ## Unreleased
 
+## 1.0.7 - 2026-05-14
+
+### Changed
+
+- Bumped the extension and package metadata to `1.0.7` and regenerated local Chrome/Edge store upload packages.
+- Stopped tracking generated store ZIP packages in Git; `dist/*.zip` remains local-only.
+
+### Fixed
+
+- Moved the command dock out of the animated footer so its fixed positioning remains anchored to the viewport instead of the footer.
+- Avoided external favicon requests for local addresses and removed anonymous CORS mode from favicon images so localhost tabs do not create console errors.
+
 ## 1.0.5 - 2026-05-14
 
 ### Changed

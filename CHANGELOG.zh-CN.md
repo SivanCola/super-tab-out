@@ -6,6 +6,18 @@
 
 ## 未发布
 
+## 1.0.7 - 2026-05-14
+
+### 变更
+
+- 将扩展与 package 元数据提升到 `1.0.7`，并重新生成本地 Chrome/Edge 商店上传包。
+- 不再用 Git 跟踪生成的商店 ZIP 包；`dist/*.zip` 只保留在本地。
+
+### 修复
+
+- 将工具 dock 移出带入场动画的 footer，确保 fixed 定位始终锚定视口，而不会被 footer 的 transform 影响。
+- 本地地址不再请求外部 favicon，并移除 favicon 图片的 anonymous CORS 模式，避免 localhost 标签页产生控制台错误。
+
 ## 1.0.5 - 2026-05-14
 
 ### 变更

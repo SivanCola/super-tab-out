@@ -12,3 +12,6 @@ AGENTS.md
 
 # Local browser binary used for extension debugging only. Do not publish.
 tools/chrome-for-testing/
+
+# Local store upload packages. Generate with `npm run package`, but do not push to GitHub.
+dist/*.zip

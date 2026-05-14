@@ -1494,6 +1494,7 @@ function readCachedFavicon(domain) {
 
 function faviconUrlFor(domain) {
   if (!domain) return '';
+  if (domain === 'localhost' || domain === '127.0.0.1' || domain === '[::1]') return '';
   const cached = readCachedFavicon(domain);
   if (cached) return cached;
   if (!externalFaviconsEnabled) return '';
@@ -1501,9 +1502,9 @@ function faviconUrlFor(domain) {
 }
 
 // Snapshot a freshly-loaded favicon <img> into localStorage. Needs the
-// image to be CORS-clean (data URL or anonymous cross-origin), which is
-// why the rendered <img> tag carries crossorigin="anonymous". If the
-// canvas gets tainted we silently give up — next render just refetches.
+// image to be CORS-clean. DuckDuckGo's icon endpoint may not provide CORS
+// headers, so external icons are allowed to render normally; if the canvas
+// gets tainted we silently give up and the next render just refetches.
 function cacheFaviconFromImg(domain, img) {
   if (!externalFaviconsEnabled) return;
   if (!domain || !img || !img.naturalWidth) return;
@@ -1803,7 +1804,7 @@ function buildOverflowChips(hiddenTabs, urlCounts = {}) {
     try { domain = new URL(tab.url).hostname; } catch {}
     const faviconUrl = faviconUrlFor(domain);
     return `<div class="page-chip clickable${chipClass}" data-action="focus-tab" data-tab-url="${safeUrl}" title="${safeTitle}" role="button" tabindex="0" aria-label="${escapeHtml(tr('focusThisTab'))}: ${safeTitle}">
-      ${faviconUrl ? `<img class="chip-favicon" src="${escapeHtml(faviconUrl)}" alt="" crossorigin="anonymous" data-favicon-domain="${escapeHtml(domain)}">` : ''}
+      ${faviconUrl ? `<img class="chip-favicon" src="${escapeHtml(faviconUrl)}" alt="" data-favicon-domain="${escapeHtml(domain)}">` : ''}
       <span class="chip-text">${escapeHtml(label)}</span>${dupeTag}
       <div class="chip-actions">
         <button class="chip-action chip-save" data-action="defer-single-tab" data-tab-url="${safeUrl}" data-tab-title="${safeTitle}" title="${escapeHtml(tr('saveForLater'))}" aria-label="${escapeHtml(tr('saveForLater'))}: ${safeTitle}">
@@ -1886,7 +1887,7 @@ function renderDomainCard(group) {
     try { domain = new URL(tab.url).hostname; } catch {}
     const faviconUrl = faviconUrlFor(domain);
     return `<div class="page-chip clickable${chipClass}" data-action="focus-tab" data-tab-url="${safeUrl}" title="${safeTitle}" role="button" tabindex="0" aria-label="${escapeHtml(tr('focusThisTab'))}: ${safeTitle}">
-      ${faviconUrl ? `<img class="chip-favicon" src="${escapeHtml(faviconUrl)}" alt="" crossorigin="anonymous" data-favicon-domain="${escapeHtml(domain)}">` : ''}
+      ${faviconUrl ? `<img class="chip-favicon" src="${escapeHtml(faviconUrl)}" alt="" data-favicon-domain="${escapeHtml(domain)}">` : ''}
       <span class="chip-text">${escapeHtml(label)}</span>${dupeTag}
       <div class="chip-actions">
         <button class="chip-action chip-save" data-action="defer-single-tab" data-tab-url="${safeUrl}" data-tab-title="${safeTitle}" title="${escapeHtml(tr('saveForLater'))}" aria-label="${escapeHtml(tr('saveForLater'))}: ${safeTitle}">
@@ -2019,7 +2020,7 @@ function renderDeferredItem(item) {
       <input type="checkbox" class="deferred-checkbox" data-action="check-deferred" data-deferred-id="${safeId}">
       <div class="deferred-info">
         <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="deferred-title" title="${safeTitle}">
-          ${faviconUrl ? `<img src="${escapeHtml(faviconUrl)}" alt="" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px" crossorigin="anonymous" data-favicon-domain="${escapeHtml(domain)}">` : ''}<span class="deferred-title-text">${safeTitle}</span>
+          ${faviconUrl ? `<img src="${escapeHtml(faviconUrl)}" alt="" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px" data-favicon-domain="${escapeHtml(domain)}">` : ''}<span class="deferred-title-text">${safeTitle}</span>
         </a>
         <div class="deferred-meta">
           <span class="deferred-domain-text">${escapeHtml(domain)}</span>
@@ -2402,7 +2403,7 @@ function renderTabGroupCard(groupInfo, tabs) {
     try { domain = new URL(tab.url).hostname; } catch {}
     const faviconUrl = faviconUrlFor(domain);
     return `<div class="page-chip clickable${chipClass}" data-action="focus-tab" data-tab-url="${safeUrl}" title="${safeTitle}" role="button" tabindex="0" aria-label="${escapeHtml(tr('focusThisTab'))}: ${safeTitle}">
-      ${faviconUrl ? `<img class="chip-favicon" src="${escapeHtml(faviconUrl)}" alt="" crossorigin="anonymous" data-favicon-domain="${escapeHtml(domain)}">` : ''}
+      ${faviconUrl ? `<img class="chip-favicon" src="${escapeHtml(faviconUrl)}" alt="" data-favicon-domain="${escapeHtml(domain)}">` : ''}
       <span class="chip-text">${escapeHtml(label)}</span>${dupeTag}
       <div class="chip-actions">
         <button class="chip-action chip-save" data-action="defer-single-tab" data-tab-url="${safeUrl}" data-tab-title="${safeTitle}" title="${escapeHtml(tr('saveForLater'))}" aria-label="${escapeHtml(tr('saveForLater'))}: ${safeTitle}">
@@ -2520,7 +2521,7 @@ function renderUngroupedTabRow(tab, urlCounts) {
   const faviconUrl = faviconUrlFor(domain);
 
   return `<article class="page-chip ungrouped-row clickable${chipClass}" data-action="focus-tab" data-tab-url="${safeUrl}" title="${safeTitle}" role="button" tabindex="0" aria-label="${escapeHtml(tr('focusThisTab'))}: ${safeTitle}">
-    ${faviconUrl ? `<img class="chip-favicon" src="${escapeHtml(faviconUrl)}" alt="" crossorigin="anonymous" data-favicon-domain="${safeDomain}">` : ''}
+    ${faviconUrl ? `<img class="chip-favicon" src="${escapeHtml(faviconUrl)}" alt="" data-favicon-domain="${safeDomain}">` : ''}
     <span class="ungrouped-row-main">
       <span class="chip-text ungrouped-title">${safeTitle}</span>${dupeTag}
       <span class="ungrouped-domain">${safeDomain}</span>

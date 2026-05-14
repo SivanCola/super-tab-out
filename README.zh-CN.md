@@ -254,10 +254,8 @@ Super Tab Out 采用本地优先设计。
 
 隐私模式不提供网页搜索框，也不会更改浏览器搜索服务提供商。
 
-商店上传包只生成在 `dist/` 目录：
-
-- `dist/super-tab-out-chrome-1.0.5.zip`
-- `dist/super-tab-out-edge-1.0.5.zip`
+商店上传包通过 `npm run package` 生成在本地 `dist/` 目录。
+ZIP 文件会被 Git 忽略，应从本地工作区上传到 Chrome Web Store / Edge Add-ons，不再提交到 GitHub。
 
 ---
 
