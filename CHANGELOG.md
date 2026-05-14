@@ -6,6 +6,12 @@ All notable changes to Super Tab Out are tracked here.
 
 ## Unreleased
 
+## 1.0.5 - 2026-05-14
+
+### Changed
+
+- Bumped the extension and package metadata to `1.0.5` and regenerated the Chrome/Edge store upload packages.
+
 ## 1.0.4 - 2026-05-14
 
 ### Fixed
