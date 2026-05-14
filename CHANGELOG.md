@@ -6,6 +6,13 @@ All notable changes to Super Tab Out are tracked here.
 
 ## Unreleased
 
+## 1.0.4 - 2026-05-14
+
+### Fixed
+
+- Restored `app.js` to the Chrome/Edge release package whitelist so the new-tab dashboard boots, reads open tabs, and renders the command dock correctly in store builds.
+- Added `app.js` to ZIP artifact validation so packaging cannot pass while omitting the runtime entry script.
+
 ## 1.0.3 - 2026-05-12
 
 ### Changed

@@ -12,6 +12,7 @@ const REQUIRED_ZIP_ENTRIES = [
   'manifest.json',
   'background.js',
   'index.html',
+  'app.js',
   'style.css',
   'theme-init.js',
   'sidepanel.html',

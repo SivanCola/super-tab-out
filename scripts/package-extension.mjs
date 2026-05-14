@@ -13,6 +13,7 @@ const PACKAGE_FILES = [
   'manifest.json',
   'background.js',
   'index.html',
+  'app.js',
   'style.css',
   'theme-init.js',
   'sidepanel.html',
