@@ -28,6 +28,8 @@ const REQUIRED_ZIP_ENTRIES = [
   'services/metrics-service.js',
   'services/tools-service.js',
   'vendor/qrcodegen.js',
+  '_locales/en/messages.json',
+  '_locales/zh_CN/messages.json',
   'icons/icon16.png',
   'icons/icon48.png',
   'icons/icon128.png',

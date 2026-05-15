@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Super Tab Out",
+  "name": "__MSG_extensionName__",
   "version": "1.0.7",
-  "description": "A local-first new tab dashboard for organizing open tabs with tab filtering, privacy mode, themes, and tab groups.",
+  "description": "__MSG_extensionDescription__",
+  "default_locale": "en",
   "permissions": ["tabs", "storage", "tabGroups", "sidePanel", "sessions"],
   "chrome_url_overrides": { "newtab": "index.html" },
   "background": { "service_worker": "background.js" },
@@ -14,17 +15,17 @@
         "default": "Ctrl+Shift+Y",
         "mac": "Command+Shift+Y"
       },
-      "description": "Open Super Tab Out side panel"
+      "description": "__MSG_commandOpenSidePanel__"
     },
     "save-current-session": {
-      "description": "Save current Super Tab Out session"
+      "description": "__MSG_commandSaveCurrentSession__"
     },
     "toggle-privacy-mode": {
-      "description": "Toggle Super Tab Out privacy mode"
+      "description": "__MSG_commandTogglePrivacyMode__"
     }
   },
   "action": {
-    "default_title": "Super Tab Out",
+    "default_title": "__MSG_extensionName__",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png"

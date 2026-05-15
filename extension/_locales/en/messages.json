@@ -1,0 +1,22 @@
+{
+  "extensionName": {
+    "message": "Super Tab Out",
+    "description": "Extension name displayed in the browser and store listing."
+  },
+  "extensionDescription": {
+    "message": "A local-first new tab dashboard for organizing open tabs with tab filtering, privacy mode, themes, and tab groups.",
+    "description": "Short extension description displayed in the browser and store listing."
+  },
+  "commandOpenSidePanel": {
+    "message": "Open Super Tab Out side panel",
+    "description": "Keyboard shortcut description for opening the side panel."
+  },
+  "commandSaveCurrentSession": {
+    "message": "Save current Super Tab Out session",
+    "description": "Keyboard shortcut description for saving the current session."
+  },
+  "commandTogglePrivacyMode": {
+    "message": "Toggle Super Tab Out privacy mode",
+    "description": "Keyboard shortcut description for toggling privacy mode."
+  }
+}

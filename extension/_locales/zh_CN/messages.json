@@ -1,0 +1,22 @@
+{
+  "extensionName": {
+    "message": "Super Tab Out",
+    "description": "浏览器和商店列表中显示的扩展名称。"
+  },
+  "extensionDescription": {
+    "message": "一个本地优先的新标签页面板，用于通过标签过滤、隐私模式、主题和标签组整理打开的标签页。",
+    "description": "浏览器和商店列表中显示的扩展简短描述。"
+  },
+  "commandOpenSidePanel": {
+    "message": "打开 Super Tab Out 侧边栏",
+    "description": "打开侧边栏的快捷键说明。"
+  },
+  "commandSaveCurrentSession": {
+    "message": "保存当前 Super Tab Out 会话",
+    "description": "保存当前会话的快捷键说明。"
+  },
+  "commandTogglePrivacyMode": {
+    "message": "切换 Super Tab Out 隐私模式",
+    "description": "切换隐私模式的快捷键说明。"
+  }
+}
