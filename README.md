@@ -7,7 +7,7 @@
 <h3>The Local-First New Tab Dashboard for Chrome, Edge & Brave</h3>
 
 <p>
-  <img alt="version v1.0.7" src="https://img.shields.io/badge/version-v1.0.7-2388d9?labelColor=555555">
+  <img alt="version v1.0.9" src="https://img.shields.io/badge/version-v1.0.9-2388d9?labelColor=555555">
   <img alt="platform Chrome Edge Brave" src="https://img.shields.io/badge/platform-Chrome%20%7C%20Edge%20%7C%20Brave-9a9a9a?labelColor=555555">
   <img alt="built with MV3 and Vanilla JS" src="https://img.shields.io/badge/built%20with-MV3%20%2B%20Vanilla%20JS-ff7a3d?labelColor=555555">
   <img alt="license Apache 2.0" src="https://img.shields.io/badge/license-Apache--2.0-35c52a?labelColor=555555">
@@ -37,7 +37,7 @@ Release notes are tracked in [`CHANGELOG.md`](./CHANGELOG.md).
 - **Search operators**: narrow results with `domain:`, `group:`, `url:`, and `saved:`; fuzzy matches are highlighted.
 - **Side Panel command center**: search, jump, save, close, dedupe, restore recently closed tabs, and use local tools without leaving the current page.
 - **Docked Command Center**: desktop layouts keep tools one click away with a compact dock and sortable favorite tools.
-- **FeHelper-inspired local tools**: open a full three-column local tools workbench for JSON, URL parsing, codecs, timestamps, real QR SVGs, UUID/passwords, hashes, cookies, and session export.
+- **FeHelper-inspired local tools**: open a full three-column local tools workbench from the toolbar icon, Command Center, or omnibox for JSON, URL parsing, codecs, timestamps, real QR SVGs, UUID/passwords, hashes, cookies, and session export.
 - **Keyboard and omnibox entry points**: use `sto` in the address bar for search/actions, or commands for panel/session/privacy workflows.
 - **Accessibility and motion controls**: icon buttons have accessible labels, chips support keyboard activation, and system reduced-motion preferences are respected.
 - **Privacy mode for screen sharing**: click the lock or press `Esc` to hide the tab dashboard behind a clean clock screen.
@@ -45,8 +45,8 @@ Release notes are tracked in [`CHANGELOG.md`](./CHANGELOG.md).
 - **One-click duplicate cleanup**: repeated URLs are marked and can be cleaned while keeping one copy.
 - **Save for later**: stash a tab into a local checklist before closing it.
 - **Auto-refresh**: tab open, close, navigation, and group changes refresh the dashboard automatically.
-- **Bilingual UI**: switch between English and Simplified Chinese from the top-right control.
-- **More themes, easier switching**: choose from 12 built-in palettes with a larger theme picker.
+- **Bilingual UI**: switch between English and Simplified Chinese from Settings.
+- **More themes, easier switching**: choose from 14 built-in palettes in the lightweight Settings panel.
 - **Local-first privacy posture**: settings and saved tabs stay on your machine.
 
 ---
@@ -55,30 +55,31 @@ Release notes are tracked in [`CHANGELOG.md`](./CHANGELOG.md).
 
 ![Super Tab Out dashboard](./store-assets/screenshot-1-dashboard.jpg)
 
-The page header keeps the product name, greeting, and date visible without showing an extra app icon. This keeps the new tab page clean while the browser extension icon remains available in Chrome or Edge UI.
+The page header keeps the greeting and date visible without repeating the product name. The product identity stays in the browser UI and footer so the new tab page reads lighter.
 
 The top-right controls are intentionally compact:
 
 - **Lock**: toggles privacy mode.
-- **EN / 中**: switches the fixed UI labels between English and Simplified Chinese.
-- **Theme picker**: opens a palette menu with 12 themes.
+- **Settings**: opens language, theme, type, and privacy-screen options.
 
 Available themes:
 
 | Theme | Tone |
 | --- | --- |
-| Warm paper | Soft editorial paper |
-| Pure white | Minimal white workspace |
-| Browser auto | Follows Chrome/Edge light or dark appearance |
-| Midnight | Dark, quiet workspace |
-| Arctic frost | Crisp blue-white |
-| Forest canopy | Muted green and earth |
-| Graphite gold | Dark graphite with gold accents |
-| Coast coral | Coastal teal with coral |
-| Plum studio | Low-saturation plum |
-| Matcha desk | Calm green reading mode |
-| Ember slate | Dark slate with warm energy |
-| Lavender mint | Light lavender with mint |
+| Adaptive Glow | Follows Chrome/Edge light or dark appearance |
+| Ivory Page | Minimal white workspace |
+| Material Orbit | Clean Material-inspired color system |
+| Cupertino Mist | Soft Apple-style glass and mist |
+| Warm Parchment | Soft editorial paper |
+| Midnight Voyage | Dark, quiet workspace |
+| Frost Field | Crisp blue-white |
+| Forest Isle | Muted green and earth |
+| Graphite Gold | Dark graphite with gold accents |
+| Coral Tide | Coastal teal with coral |
+| Plum Shade | Low-saturation plum |
+| Matcha Haze | Calm green reading mode |
+| Ember Slate | Dark slate with warm energy |
+| Lavender Breeze | Light lavender with mint |
 
 Additional release screenshots:
 
@@ -203,7 +204,7 @@ The search pill uses one local index for open tabs, Chrome group titles, saved-f
 The Side Panel keeps Super Tab Out available while you stay on the current page:
 
 - search open tabs, saved-for-later items, and saved sessions
-- open the docked Command Center from the new-tab dashboard
+- open from `Ctrl/Cmd + Shift + Y` or omnibox actions such as `sto panel`
 - jump to a tab, save it for later, or close it
 - clean duplicates while keeping one copy
 - restore browser-level recently closed tabs/windows via `chrome.sessions`
@@ -213,7 +214,7 @@ The Side Panel keeps Super Tab Out available while you stay on the current page:
 
 ### Local Tools
 
-The full Tools workbench is available from the Command Center and from omnibox entries such as `sto tool json`.
+The full Tools workbench opens from the extension toolbar icon, the Command Center, and omnibox entries such as `sto tool json`.
 
 Initial tools are local-only: JSON format/minify/validate with tree preview and error diagnostics, URL parsing with query tables, Base64/Unicode/HTML entity codecs, timestamp and FILETIME conversion with cards, real QR SVG generation, UUID/password generation, MD5/SHA hashes, Cookie-to-JSON, and session export as JSON, Markdown, or URL lists.
 
@@ -303,7 +304,7 @@ The extension currently requests:
 | Animations | CSS transitions and JavaScript particles |
 | Build | None |
 
-Everything runs inside the extension page. The background service worker only keeps the toolbar badge count up to date.
+Everything runs locally in the extension. The background service worker owns browser-level entry points such as the toolbar Tools shortcut, badge count, commands, omnibox actions, side panel, and lightweight session actions.
 
 ---
 

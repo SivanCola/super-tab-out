@@ -41,6 +41,13 @@
     return message.includes('quota') || message.includes('bytes') || message.includes('maximum');
   }
 
+  function normalizeRestorableUrl(url) {
+    if (global.SuperTabOutUrls?.normalizeRestorableUrl) {
+      return global.SuperTabOutUrls.normalizeRestorableUrl(url);
+    }
+    return '';
+  }
+
   function normalizeStorageError(error, operation) {
     return {
       operation,
@@ -101,7 +108,8 @@
 
   function normalizeDeferredItem(item, index) {
     const source = isPlainObject(item) ? item : {};
-    const url = typeof source.url === 'string' ? source.url : '';
+    const url = normalizeRestorableUrl(source.url);
+    if (!url) return null;
     const title = typeof source.title === 'string' ? source.title : url;
     const savedAt = typeof source.savedAt === 'string' ? source.savedAt : nowIso();
     const id = typeof source.id === 'string' && source.id
@@ -122,8 +130,9 @@
   function normalizeDeferred(value) {
     if (!Array.isArray(value)) return [];
     return value
-      .filter(item => isPlainObject(item) && typeof item.url === 'string' && item.url.length > 0)
-      .map(normalizeDeferredItem);
+      .filter(item => isPlainObject(item))
+      .map(normalizeDeferredItem)
+      .filter(Boolean);
   }
 
   function normalizeSavedSession(session, index) {
@@ -131,19 +140,24 @@
     const sessionGroupColor = typeof source.groupColor === 'string' ? source.groupColor : '';
     const tabs = Array.isArray(source.tabs)
       ? source.tabs
-          .filter(tab => isPlainObject(tab) && typeof tab.url === 'string' && tab.url.length > 0)
-          .map(tab => ({
-            url: tab.url,
-            title: typeof tab.title === 'string' ? tab.title : tab.url,
-            pinned: tab.pinned === true,
-            ...(Number.isFinite(Number(tab.windowId)) ? { windowId: Number(tab.windowId) } : {}),
-            ...(Number.isFinite(Number(tab.index)) ? { index: Number(tab.index) } : {}),
-            groupTitle: typeof tab.groupTitle === 'string' ? tab.groupTitle : '',
-            groupColor: typeof tab.groupColor === 'string' ? tab.groupColor : sessionGroupColor,
-          }))
+          .filter(tab => isPlainObject(tab))
+          .map(tab => {
+            const url = normalizeRestorableUrl(tab.url);
+            if (!url) return null;
+            return {
+              url,
+              title: typeof tab.title === 'string' ? tab.title : url,
+              pinned: tab.pinned === true,
+              ...(Number.isFinite(Number(tab.windowId)) ? { windowId: Number(tab.windowId) } : {}),
+              ...(Number.isFinite(Number(tab.index)) ? { index: Number(tab.index) } : {}),
+              groupTitle: typeof tab.groupTitle === 'string' ? tab.groupTitle : '',
+              groupColor: typeof tab.groupColor === 'string' ? tab.groupColor : sessionGroupColor,
+            };
+          })
+          .filter(Boolean)
       : [];
     const urls = Array.isArray(source.urls)
-      ? source.urls.filter(url => typeof url === 'string' && url.length > 0)
+      ? source.urls.map(normalizeRestorableUrl).filter(Boolean)
       : tabs.map(tab => tab.url);
 
     return {
@@ -265,8 +279,11 @@
 
   async function addSavedSession(session) {
     const sessions = await getSavedSessions();
-    sessions.unshift(normalizeSavedSession(session, sessions.length));
+    const normalized = normalizeSavedSession(session, sessions.length);
+    if (normalized.urls.length === 0 && normalized.tabs.length === 0) return false;
+    sessions.unshift(normalized);
     await setSavedSessions(sessions);
+    return true;
   }
 
   async function removeSavedSession(id) {
@@ -324,16 +341,19 @@
   }
 
   async function addDeferredTab(tab) {
+    const url = normalizeRestorableUrl(tab?.url);
+    if (!url) return false;
     const deferred = await getDeferred();
     deferred.push({
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-      url: tab.url,
-      title: tab.title || tab.url,
+      url,
+      title: tab.title || url,
       savedAt: nowIso(),
       completed: false,
       dismissed: false,
     });
     await setDeferred(deferred);
+    return true;
   }
 
   async function updateDeferredTab(id, patch) {

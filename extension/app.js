@@ -524,11 +524,26 @@ function initFontSwitcher() {
    ---------------------------------------------------------------- */
 const LANGUAGES = ['en', 'zh'];
 const LANGUAGE_STORAGE_KEY = 'tab-out-language';
+const LANGUAGE_LABEL_KEYS = {
+  en: 'languageEnglish',
+  zh: 'languageChinese',
+};
+const LANGUAGE_SHORT_LABELS = {
+  en: 'EN',
+  zh: '中',
+};
 
 const UI_COPY = {
   en: {
     documentTitle: 'Super Tab Out',
     languageLabel: 'Language',
+    languageEnglish: 'English',
+    languageChinese: 'Chinese',
+    languageCurrentTitle: ({ language }) => `Language: ${language}`,
+    settingsTitle: 'Settings',
+    settingsSectionsLabel: 'Settings sections',
+    appearanceSettings: 'Appearance',
+    privacyScreenSettings: 'Privacy screen',
     dockToolsTitle: 'Open tools dock',
     privacyToggleTitle: 'Toggle privacy mode (Esc)',
     themeLabel: 'Theme',
@@ -547,8 +562,8 @@ const UI_COPY = {
     themeEmber: 'Ember Slate',
     themeLavender: 'Lavender Breeze',
     themeCurrentTitle: ({ theme }) => `Theme: ${theme}`,
-    fontLabel: 'Typography',
-    fontEntryLabel: 'Text',
+    fontLabel: 'Type',
+    fontEntryLabel: 'Type',
     fontSystem: 'System',
     fontReadable: 'Readable',
     fontCompact: 'Compact',
@@ -557,7 +572,7 @@ const UI_COPY = {
     fontReadableDesc: 'Larger, looser rows',
     fontCompactDesc: 'More tabs per screen',
     fontEditorialDesc: 'Serif-led headings',
-    fontCurrentTitle: ({ font }) => `Typography: ${font}`,
+    fontCurrentTitle: ({ font }) => `Type: ${font}`,
     fontSizeByArea: 'Size by area',
     fontSizeHeader: 'Header',
     fontSizeCards: 'Cards',
@@ -589,6 +604,7 @@ const UI_COPY = {
     tabHealthStat: 'Tab health',
     closedWeekStat: 'Closed this week',
     savedWeekStat: 'Saved this week',
+    versionLabel: ({ version }) => `Version ${version}`,
     creditAttribution: 'Apache-2.0 &middot; Based on <a href="https://github.com/zarazhangrui/tab-out" target="_top">Tab Out</a> (MIT)',
     greetingMorning: 'Good morning',
     greetingAfternoon: 'Good afternoon',
@@ -683,6 +699,13 @@ const UI_COPY = {
   zh: {
     documentTitle: 'Super Tab Out',
     languageLabel: '语言',
+    languageEnglish: '英文',
+    languageChinese: '中文',
+    languageCurrentTitle: ({ language }) => `语言：${language}`,
+    settingsTitle: '设置',
+    settingsSectionsLabel: '设置分区',
+    appearanceSettings: '外观',
+    privacyScreenSettings: '隐私屏幕',
     dockToolsTitle: '打开工具栏',
     privacyToggleTitle: '切换隐私模式（Esc）',
     themeLabel: '主题',
@@ -701,7 +724,7 @@ const UI_COPY = {
     themeEmber: '烬岩',
     themeLavender: '薰风',
     themeCurrentTitle: ({ theme }) => `主题：${theme}`,
-    fontLabel: '字体与密度',
+    fontLabel: '字体',
     fontEntryLabel: '字体',
     fontSystem: '系统',
     fontReadable: '易读',
@@ -711,7 +734,7 @@ const UI_COPY = {
     fontReadableDesc: '更大字号和更松行距',
     fontCompactDesc: '一屏显示更多标签',
     fontEditorialDesc: '标题使用衬线气质',
-    fontCurrentTitle: ({ font }) => `字体与密度：${font}`,
+    fontCurrentTitle: ({ font }) => `字体：${font}`,
     fontSizeByArea: '按区域调字号',
     fontSizeHeader: '标题',
     fontSizeCards: '卡片',
@@ -743,6 +766,7 @@ const UI_COPY = {
     tabHealthStat: '健康分',
     closedWeekStat: '本周关闭',
     savedWeekStat: '本周保存',
+    versionLabel: ({ version }) => `当前版本 ${version}`,
     creditAttribution: 'Apache-2.0 &middot; 基于 <a href="https://github.com/zarazhangrui/tab-out" target="_top">Tab Out</a> (MIT)',
     greetingMorning: '早上好',
     greetingAfternoon: '下午好',
@@ -837,6 +861,7 @@ const UI_COPY = {
 };
 
 let activeLanguage = getStoredLanguage();
+let extensionVersion = '';
 
 function getStoredLanguage() {
   try {
@@ -850,6 +875,132 @@ function getStoredLanguage() {
 function tr(key, params = {}) {
   const value = (UI_COPY[activeLanguage] && UI_COPY[activeLanguage][key]) || UI_COPY.en[key] || key;
   return typeof value === 'function' ? value(params) : value;
+}
+
+function getRuntimeManifestVersion() {
+  try {
+    return chrome?.runtime?.getManifest?.().version || '';
+  } catch {
+    return '';
+  }
+}
+
+async function loadExtensionVersion() {
+  extensionVersion = getRuntimeManifestVersion();
+
+  if (!extensionVersion && typeof fetch === 'function') {
+    try {
+      const response = await fetch('manifest.json');
+      if (response.ok) {
+        const manifest = await response.json();
+        extensionVersion = manifest?.version || '';
+      }
+    } catch {}
+  }
+
+  syncExtensionVersionDisplay();
+}
+
+function syncExtensionVersionDisplay() {
+  const versionEl = document.getElementById('extensionVersion');
+  if (!versionEl) return;
+
+  if (!extensionVersion) {
+    versionEl.hidden = true;
+    versionEl.textContent = '';
+    versionEl.removeAttribute('aria-label');
+    versionEl.removeAttribute('title');
+    return;
+  }
+
+  versionEl.hidden = false;
+  versionEl.textContent = `v${extensionVersion}`;
+  const label = tr('versionLabel', { version: extensionVersion });
+  versionEl.setAttribute('aria-label', label);
+  versionEl.setAttribute('title', label);
+}
+
+function syncLanguageControls() {
+  const languageSwitcher = document.getElementById('languageSwitcher');
+  if (languageSwitcher) languageSwitcher.setAttribute('aria-label', tr('languageLabel'));
+
+  const languageMenu = document.getElementById('languageMenu');
+  if (languageMenu) languageMenu.setAttribute('aria-label', tr('languageLabel'));
+
+  const activeLabel = document.getElementById('activeLanguageLabel');
+  if (activeLabel) activeLabel.textContent = LANGUAGE_SHORT_LABELS[activeLanguage] || activeLanguage.toUpperCase();
+
+  document.querySelectorAll('.language-option[data-language]').forEach(btn => {
+    const lang = btn.dataset.language;
+    const selected = lang === activeLanguage;
+    btn.setAttribute('aria-pressed', selected ? 'true' : 'false');
+    btn.classList.toggle('active', selected);
+
+    const labelKey = LANGUAGE_LABEL_KEYS[lang];
+    const label = labelKey ? tr(labelKey) : lang;
+    const labelEl = btn.querySelector('.language-option-label');
+    if (labelEl) labelEl.textContent = label;
+    btn.setAttribute('title', label);
+  });
+
+  const currentBtn = document.getElementById('languageCurrentBtn');
+  if (currentBtn) {
+    const label = tr(LANGUAGE_LABEL_KEYS[activeLanguage] || 'languageLabel');
+    const title = tr('languageCurrentTitle', { language: label });
+    currentBtn.setAttribute('title', title);
+    currentBtn.setAttribute('aria-label', title);
+  }
+}
+
+function setLanguageMenuOpen(open) {
+  const picker = document.getElementById('languageSwitcher');
+  const button = document.getElementById('languageCurrentBtn');
+  if (!picker || !button) return;
+  picker.classList.toggle('language-menu-open', open);
+  button.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+
+function toggleLanguageMenu() {
+  const picker = document.getElementById('languageSwitcher');
+  setLanguageMenuOpen(!picker?.classList.contains('language-menu-open'));
+}
+
+function initSettingsPanelLayout() {
+  const panel = document.getElementById('privacySettings');
+  const languageSlot = document.getElementById('settingsLanguageSlot');
+  const themeSlot = document.getElementById('settingsThemeSlot');
+  const fontSlot = document.getElementById('settingsFontSlot');
+  const languageSwitcher = document.getElementById('languageSwitcher');
+  const themePicker = document.getElementById('themePicker');
+  const fontPicker = document.getElementById('fontPicker');
+
+  if (languageSlot && languageSwitcher) languageSlot.append(languageSwitcher);
+  if (themeSlot && themePicker) themeSlot.append(themePicker);
+  if (fontSlot && fontPicker) fontSlot.append(fontPicker);
+  if (panel && panel.parentElement !== document.body) document.body.append(panel);
+}
+
+function setSettingsView(view = 'appearance') {
+  const activeView = view === 'privacy' ? 'privacy' : 'appearance';
+
+  document.querySelectorAll('.settings-tab[data-settings-view]').forEach(tab => {
+    const selected = tab.dataset.settingsView === activeView;
+    tab.classList.toggle('active', selected);
+    tab.setAttribute('aria-selected', selected ? 'true' : 'false');
+    tab.setAttribute('tabindex', selected ? '0' : '-1');
+  });
+
+  document.querySelectorAll('.settings-pane[data-settings-pane]').forEach(pane => {
+    const selected = pane.dataset.settingsPane === activeView;
+    pane.classList.toggle('active', selected);
+    pane.hidden = !selected;
+  });
+
+  if (activeView === 'privacy') {
+    setLanguageMenuOpen(false);
+    setThemeMenuOpen(false);
+    setFontMenuOpen(false);
+  }
 }
 
 function applyStaticTranslations() {
@@ -869,9 +1020,10 @@ function applyStaticTranslations() {
   document.querySelectorAll('[data-i18n-title]').forEach(el => {
     el.setAttribute('title', tr(el.dataset.i18nTitle));
   });
+  document.querySelectorAll('[data-i18n-aria-label]').forEach(el => {
+    el.setAttribute('aria-label', tr(el.dataset.i18nAriaLabel));
+  });
 
-  const languageSwitcher = document.getElementById('languageSwitcher');
-  if (languageSwitcher) languageSwitcher.setAttribute('aria-label', tr('languageLabel'));
   const themeMenu = document.getElementById('themeMenu');
   if (themeMenu) themeMenu.setAttribute('aria-label', tr('themeLabel'));
   const fontMenu = document.getElementById('fontMenu');
@@ -889,16 +1041,12 @@ function applyStaticTranslations() {
     privacyToggle.setAttribute('aria-label', tr('privacyToggleTitle'));
   }
   const privacySettingsBtn = document.getElementById('privacySettingsBtn');
-  if (privacySettingsBtn) privacySettingsBtn.setAttribute('aria-label', tr('privacySettingsTitle'));
+  if (privacySettingsBtn) privacySettingsBtn.setAttribute('aria-label', tr('settingsTitle'));
 
+  syncLanguageControls();
   syncThemeControls();
   syncFontControls();
-
-  document.querySelectorAll('.language-btn[data-language]').forEach(btn => {
-    const selected = btn.dataset.language === activeLanguage;
-    btn.setAttribute('aria-pressed', selected ? 'true' : 'false');
-    btn.classList.toggle('active', selected);
-  });
+  syncExtensionVersionDisplay();
 
   checkTabOutDupes();
 }
@@ -1445,13 +1593,7 @@ function escapeHtml(str) {
 // Only allow http/https/file as href targets, so a saved tab with a
 // javascript: URL can't execute script when clicked.
 function isSafeNavUrl(url) {
-  if (!url) return false;
-  try {
-    const scheme = new URL(url).protocol;
-    return scheme === 'http:' || scheme === 'https:' || scheme === 'file:';
-  } catch {
-    return false;
-  }
+  return Boolean(window.SuperTabOutUrls?.isRestorableUrl?.(url));
 }
 
 
@@ -2866,12 +3008,19 @@ async function renderDashboard() {
 
 document.addEventListener('click', async (e) => {
   // Walk up the DOM to find the nearest element with data-action
-  const actionEl = e.target.closest('[data-action]');
+  const target = e.target instanceof Element ? e.target : null;
+  const actionEl = target?.closest('[data-action]');
   if (!actionEl) return;
 
   const action = actionEl.dataset.action;
   const isGroupMenuColorAction = action === 'toggle-group-color-picker' || action === 'set-group-color';
   if (actionEl.closest('.group-action-menu') && !isGroupMenuColorAction) closeGroupActionMenus();
+
+  // ---- Switch settings panel section ----
+  if (action === 'set-settings-view') {
+    setSettingsView(actionEl.dataset.settingsView);
+    return;
+  }
 
   // ---- Switch color theme ----
   if (action === 'set-theme') {
@@ -2883,6 +3032,7 @@ document.addEventListener('click', async (e) => {
 
   // ---- Open/close theme palette ----
   if (action === 'toggle-theme-menu') {
+    setLanguageMenuOpen(false);
     setFontMenuOpen(false);
     toggleThemeMenu();
     return;
@@ -2908,6 +3058,7 @@ document.addEventListener('click', async (e) => {
 
   // ---- Open/close font preset menu ----
   if (action === 'toggle-font-menu') {
+    setLanguageMenuOpen(false);
     setThemeMenuOpen(false);
     toggleFontMenu();
     return;
@@ -2924,6 +3075,15 @@ document.addEventListener('click', async (e) => {
   if (action === 'set-language') {
     const lang = actionEl.dataset.language;
     if (lang) setLanguage(lang, { save: true, rerender: true });
+    setLanguageMenuOpen(false);
+    return;
+  }
+
+  // ---- Open/close language menu ----
+  if (action === 'toggle-language-menu') {
+    setThemeMenuOpen(false);
+    setFontMenuOpen(false);
+    toggleLanguageMenu();
     return;
   }
 
@@ -3449,14 +3609,16 @@ document.addEventListener('click', async (e) => {
 
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Enter' && e.key !== ' ') return;
-  const actionEl = e.target.closest('[role="button"][data-action]');
+  const target = e.target instanceof Element ? e.target : null;
+  const actionEl = target?.closest('[role="button"][data-action]');
   if (!actionEl || actionEl.tagName === 'BUTTON') return;
   e.preventDefault();
   actionEl.click();
 });
 
 document.addEventListener('keydown', (e) => {
-  const option = e.target.closest('.group-color-option');
+  const target = e.target instanceof Element ? e.target : null;
+  const option = target?.closest('.group-color-option');
   if (!option) return;
 
   const keys = ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'];
@@ -3477,7 +3639,8 @@ document.addEventListener('keydown', (e) => {
 
 // ---- Archive toggle — expand/collapse the archive section ----
 document.addEventListener('click', (e) => {
-  const toggle = e.target.closest('#archiveToggle');
+  const target = e.target instanceof Element ? e.target : null;
+  const toggle = target?.closest('#archiveToggle');
   if (!toggle) return;
 
   toggle.classList.toggle('open');
@@ -3914,7 +4077,8 @@ function setCommandDrawerOpen(open, { view = null } = {}) {
   }
 }
 document.addEventListener('click', (event) => {
-  const btn = event.target.closest('[data-command-dock-view]');
+  const target = event.target instanceof Element ? event.target : null;
+  const btn = target?.closest('[data-command-dock-view]');
   const drawer = document.getElementById('commandDrawer');
   if (!btn || !drawer) return;
   const view = btn.dataset.commandDockView;
@@ -4002,6 +4166,51 @@ async function togglePrivacyMode() {
 
 document.getElementById('privacyToggle')?.addEventListener('click', togglePrivacyMode);
 
+function isSettingsPanelOpen() {
+  const panel = document.getElementById('privacySettings');
+  return Boolean(panel && panel.style.display !== 'none');
+}
+
+function positionSettingsPanel() {
+  const panel = document.getElementById('privacySettings');
+  const btn = document.getElementById('privacySettingsBtn');
+  if (!panel || !btn) return;
+
+  const rect = btn.getBoundingClientRect();
+  const gutter = window.innerWidth <= 560 ? 14 : 18;
+  const top = Math.max(gutter, Math.min(rect.bottom + 8, window.innerHeight - 120));
+  const maxHeight = Math.max(220, window.innerHeight - top - gutter);
+  panel.style.setProperty('--settings-panel-top', `${top}px`);
+  panel.style.setProperty('--settings-panel-left', `${gutter}px`);
+  panel.style.setProperty('--settings-panel-right', `${Math.max(gutter, window.innerWidth - rect.right)}px`);
+  panel.style.setProperty('--settings-panel-max-height', `${maxHeight}px`);
+}
+
+function setSettingsPanelOpen(open) {
+  const panel = document.getElementById('privacySettings');
+  const btn = document.getElementById('privacySettingsBtn');
+  if (!panel) return;
+  if (open) {
+    setSettingsView(document.body.classList.contains('privacy-mode') ? 'privacy' : 'appearance');
+    positionSettingsPanel();
+  }
+  panel.style.display = open ? '' : 'none';
+  if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  if (!open) {
+    setLanguageMenuOpen(false);
+    setThemeMenuOpen(false);
+    setFontMenuOpen(false);
+  }
+}
+
+window.addEventListener('resize', () => {
+  if (isSettingsPanelOpen()) positionSettingsPanel();
+});
+
+window.addEventListener('scroll', () => {
+  if (isSettingsPanelOpen()) positionSettingsPanel();
+}, { passive: true });
+
 // Esc toggles privacy. Typing in any text input first defuses Esc to just
 // blur the field — including the open-tabs search handled above.
 document.addEventListener('keydown', (e) => {
@@ -4014,6 +4223,12 @@ document.addEventListener('keydown', (e) => {
   if (document.querySelector('.group-action-menu-control.is-open')) {
     e.preventDefault();
     closeGroupActionMenus({ restoreFocus: true });
+    return;
+  }
+  const languageSwitcher = document.getElementById('languageSwitcher');
+  if (languageSwitcher?.classList.contains('language-menu-open')) {
+    e.preventDefault();
+    setLanguageMenuOpen(false);
     return;
   }
   const themePicker = document.getElementById('themePicker');
@@ -4031,7 +4246,13 @@ document.addEventListener('keydown', (e) => {
   const active = document.activeElement;
   const GUARDED_IDS = ['psMottoInput', 'openTabsSearch', 'archiveSearch'];
   if (active && GUARDED_IDS.includes(active.id)) {
+    e.preventDefault();
     active.blur();
+    return;
+  }
+  if (isSettingsPanelOpen()) {
+    e.preventDefault();
+    setSettingsPanelOpen(false);
     return;
   }
   e.preventDefault();
@@ -4040,29 +4261,26 @@ document.addEventListener('keydown', (e) => {
 
 // Privacy settings panel: gear toggles it, clicks outside close it.
 document.getElementById('privacySettingsBtn')?.addEventListener('click', () => {
-  const panel = document.getElementById('privacySettings');
-  const btn = document.getElementById('privacySettingsBtn');
-  if (!panel) return;
-  const willOpen = panel.style.display === 'none';
-  panel.style.display = willOpen ? '' : 'none';
-  if (btn) btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+  setSettingsPanelOpen(!isSettingsPanelOpen());
 });
 
 document.addEventListener('click', (e) => {
-  if (!e.target.closest('.group-color-control')) closeGroupColorPickers();
-  if (!e.target.closest('.group-action-menu-control')) closeGroupActionMenus();
+  const target = e.target instanceof Element ? e.target : null;
+  if (!target?.closest('.group-color-control')) closeGroupColorPickers();
+  if (!target?.closest('.group-action-menu-control')) closeGroupActionMenus();
 
+  const languageSwitcher = document.getElementById('languageSwitcher');
+  if (languageSwitcher && target && !languageSwitcher.contains(target)) setLanguageMenuOpen(false);
   const themePicker = document.getElementById('themePicker');
-  if (themePicker && !themePicker.contains(e.target)) setThemeMenuOpen(false);
+  if (themePicker && target && !themePicker.contains(target)) setThemeMenuOpen(false);
   const fontPicker = document.getElementById('fontPicker');
-  if (fontPicker && !fontPicker.contains(e.target)) setFontMenuOpen(false);
+  if (fontPicker && target && !fontPicker.contains(target)) setFontMenuOpen(false);
 
   const panel = document.getElementById('privacySettings');
   const btn   = document.getElementById('privacySettingsBtn');
   if (!panel || panel.style.display === 'none') return;
-  if (panel.contains(e.target) || (btn && btn.contains(e.target))) return;
-  panel.style.display = 'none';
-  if (btn) btn.setAttribute('aria-expanded', 'false');
+  if (target && (panel.contains(target) || (btn && btn.contains(target)))) return;
+  setSettingsPanelOpen(false);
 });
 
 for (const id of ['psClock', 'psDate', 'psMotto', 'psFavicons']) {
@@ -4169,9 +4387,11 @@ document.addEventListener('keydown', async (e) => {
 /* ----------------------------------------------------------------
    INITIALIZE
    ---------------------------------------------------------------- */
+initSettingsPanelLayout();
 initThemeSwitcher();
 initFontSwitcher();
 initLanguageSwitcher();
+loadExtensionVersion();
 initStorageErrorToasts();
 cleanExpiredFavicons();
 

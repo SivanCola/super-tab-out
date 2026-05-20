@@ -6,6 +6,7 @@
  */
 
 importScripts(
+  'services/url-service.js',
   'services/storage-service.js',
   'services/tabs-service.js',
   'services/search-service.js',
@@ -48,12 +49,17 @@ async function openSidePanel(tab) {
 
 async function configureActionClickBehavior() {
   try {
+    // Toolbar clicks open the Tools workbench; side panel stays on commands/omnibox.
     await chrome.sidePanel?.setPanelBehavior?.({ openPanelOnActionClick: false });
   } catch {}
 }
 
 async function openToolsPage() {
   await chrome.tabs.create({ url: chrome.runtime.getURL('tools.html?tool=url') });
+}
+
+function normalizeRestorableUrl(url) {
+  return self.SuperTabOutUrls?.normalizeRestorableUrl?.(url) || '';
 }
 
 async function saveCurrentSession(scope = 'all') {
@@ -177,7 +183,8 @@ async function handleOmniboxSelection(text) {
     return;
   }
   if (text.startsWith('url:')) {
-    await chrome.tabs.create({ url: text.slice(4) });
+    const url = normalizeRestorableUrl(text.slice(4));
+    if (url) await chrome.tabs.create({ url });
     return;
   }
   if (text.startsWith('session:')) {

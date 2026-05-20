@@ -55,6 +55,13 @@
     return !!tab && tab.pinned !== true && !isInternalUrl(tab.url || '', extensionId);
   }
 
+  function normalizeRestorableUrl(url) {
+    if (global.SuperTabOutUrls?.normalizeRestorableUrl) {
+      return global.SuperTabOutUrls.normalizeRestorableUrl(url);
+    }
+    return '';
+  }
+
   function normalizeTab(tab, extensionId) {
     const url = tab.url || '';
     const newtabUrl = extensionNewTabUrl(extensionId);
@@ -231,15 +238,19 @@
 
     return sourceTabs
       .filter(tab => tab && typeof tab.url === 'string' && tab.url.length > 0)
-      .filter(tab => !isInternalUrl(tab.url, getChromeApi()?.runtime?.id || ''))
-      .map((tab, index) => ({
-        url: tab.url,
-        title: typeof tab.title === 'string' ? tab.title : tab.url,
-        windowId: Number.isFinite(Number(tab.windowId)) ? Number(tab.windowId) : 0,
-        index: Number.isFinite(Number(tab.index)) ? Number(tab.index) : index,
-        groupTitle: typeof tab.groupTitle === 'string' ? tab.groupTitle : '',
-        groupColor: typeof tab.groupColor === 'string' ? tab.groupColor : '',
-      }))
+      .map((tab, index) => {
+        const url = normalizeRestorableUrl(tab.url);
+        if (!url || isInternalUrl(url, getChromeApi()?.runtime?.id || '')) return null;
+        return {
+          url,
+          title: typeof tab.title === 'string' ? tab.title : url,
+          windowId: Number.isFinite(Number(tab.windowId)) ? Number(tab.windowId) : 0,
+          index: Number.isFinite(Number(tab.index)) ? Number(tab.index) : index,
+          groupTitle: typeof tab.groupTitle === 'string' ? tab.groupTitle : '',
+          groupColor: typeof tab.groupColor === 'string' ? tab.groupColor : '',
+        };
+      })
+      .filter(Boolean)
       .sort((a, b) => a.windowId === b.windowId ? a.index - b.index : a.windowId - b.windowId);
   }
 

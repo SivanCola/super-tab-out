@@ -257,6 +257,10 @@ function domainFor(url) {
   catch { return ''; }
 }
 
+function normalizeRestorableUrl(url) {
+  return self.SuperTabOutUrls?.normalizeRestorableUrl?.(url) || '';
+}
+
 async function refreshData() {
   openTabs = (await self.SuperTabOutTabs.fetchOpenTabs())
     .filter(tab => self.SuperTabOutTabs.isRealTab(tab, chrome.runtime.id));
@@ -968,9 +972,11 @@ document.addEventListener('click', async (e) => {
   const url = actionEl.dataset.url;
   if (action === 'focus') await self.SuperTabOutTabs.focusTab(url);
   if (action === 'save-tab') {
-    await self.SuperTabOutStorage.addDeferredTab({ url, title: actionEl.dataset.title || url });
+    const restorableUrl = normalizeRestorableUrl(url);
+    if (!restorableUrl) return;
+    await self.SuperTabOutStorage.addDeferredTab({ url: restorableUrl, title: actionEl.dataset.title || restorableUrl });
     await self.SuperTabOutTabs.closeTabsByUrls([url]);
-    await self.SuperTabOutStorage.recordActivity({ type: 'saved', count: 1, domain: domainFor(url) });
+    await self.SuperTabOutStorage.recordActivity({ type: 'saved', count: 1, domain: domainFor(restorableUrl) });
     toast(panelTr('savedForLater'));
     await refreshData();
   }
@@ -980,7 +986,10 @@ document.addEventListener('click', async (e) => {
     toast(panelTr('tabClosed'));
     await refreshData();
   }
-  if (action === 'open-url') await chrome.tabs.create({ url });
+  if (action === 'open-url') {
+    const restorableUrl = normalizeRestorableUrl(url);
+    if (restorableUrl) await chrome.tabs.create({ url: restorableUrl });
+  }
   if (action === 'restore-recent') {
     await self.SuperTabOutTabs.restoreSession(actionEl.dataset.sessionId);
     await refreshData();

@@ -154,7 +154,10 @@ async function openExtensionPage(port, url) {
   const target = await newTarget(port, url);
   const page = new CdpPage(target.webSocketDebuggerUrl);
   const errors = [];
-  page.on('Runtime.exceptionThrown', params => errors.push(params.exceptionDetails?.text || 'Runtime exception'));
+  page.on('Runtime.exceptionThrown', params => {
+    const details = params.exceptionDetails;
+    errors.push(details?.exception?.description || details?.text || 'Runtime exception');
+  });
   page.on('Log.entryAdded', params => {
     if (params.entry?.level === 'error') {
       const details = [params.entry.text, params.entry.url].filter(Boolean).join(' ');
@@ -295,6 +298,49 @@ async function main() {
     assert.deepEqual(draggedOrder.list, ['url', 'json', 'codec']);
     assert.deepEqual(draggedOrder.dock, ['url', 'json', 'codec']);
     assert.deepEqual(draggedOrder.stored, ['url', 'json', 'codec']);
+    await page.evaluate(`document.querySelector('#commandDockToolsBtn').click()`);
+    await page.waitFor('!document.body.classList.contains("command-drawer-open")');
+    await page.send('Emulation.setDeviceMetricsOverride', {
+      width: 390,
+      height: 844,
+      deviceScaleFactor: 1,
+      mobile: false,
+    });
+    await page.evaluate(`window.scrollTo(0, 0); document.querySelector('#privacySettingsBtn').click()`);
+    const mobileSettingsPanel = await page.evaluate(`(() => {
+      const panel = document.querySelector('#privacySettings');
+      const rect = panel.getBoundingClientRect();
+      const centerEl = document.elementFromPoint(rect.left + rect.width / 2, rect.top + Math.min(rect.height / 2, 120));
+      return {
+        display: getComputedStyle(panel).display,
+        left: rect.left,
+        right: rect.right,
+        top: rect.top,
+        bottom: rect.bottom,
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+        centerInside: panel === centerEl || panel.contains(centerEl),
+      };
+    })()`);
+    assert.notEqual(mobileSettingsPanel.display, 'none');
+    assert.ok(mobileSettingsPanel.left >= 0, `Settings panel left overflow: ${JSON.stringify(mobileSettingsPanel)}`);
+    assert.ok(mobileSettingsPanel.right <= mobileSettingsPanel.viewportWidth, `Settings panel right overflow: ${JSON.stringify(mobileSettingsPanel)}`);
+    assert.ok(mobileSettingsPanel.top >= 0, `Settings panel top overflow: ${JSON.stringify(mobileSettingsPanel)}`);
+    assert.ok(mobileSettingsPanel.bottom <= mobileSettingsPanel.viewportHeight, `Settings panel bottom overflow: ${JSON.stringify(mobileSettingsPanel)}`);
+    assert.equal(mobileSettingsPanel.centerInside, true);
+    const escapeState = await page.evaluate(`(() => {
+      document.querySelector('[data-settings-view="privacy"]').click();
+      const input = document.querySelector('#psMottoInput');
+      input.focus();
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+      const panel = document.querySelector('#privacySettings');
+      return {
+        activeId: document.activeElement?.id || '',
+        panelOpen: getComputedStyle(panel).display !== 'none',
+      };
+    })()`);
+    assert.notEqual(escapeState.activeId, 'psMottoInput');
+    assert.equal(escapeState.panelOpen, true);
     assert.deepEqual(page.errors.filter(error => !error.includes('/config.local.js')), []);
     page.close();
     page = null;

@@ -22,6 +22,7 @@ const PACKAGE_FILES = [
   'tools.html',
   'tools.css',
   'tools.js',
+  'services/url-service.js',
   'services/html-service.js',
   'services/storage-service.js',
   'services/tabs-service.js',

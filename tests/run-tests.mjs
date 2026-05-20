@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 const require = createRequire(import.meta.url);
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
+const urls = require(resolve(root, 'extension/services/url-service.js'));
 const tabs = require(resolve(root, 'extension/services/tabs-service.js'));
 const storage = require(resolve(root, 'extension/services/storage-service.js'));
 const search = require(resolve(root, 'extension/services/search-service.js'));
@@ -33,6 +34,19 @@ function makeFakeStorage(seed = {}) {
       return JSON.stringify(store).length;
     },
   };
+}
+
+function testUrlService() {
+  assert.equal(urls.isRestorableUrl('https://a.test'), true);
+  assert.equal(urls.isRestorableUrl('http://a.test'), true);
+  assert.equal(urls.isRestorableUrl('file:///Users/a.txt'), true);
+  assert.equal(urls.normalizeRestorableUrl('https://a.test'), 'https://a.test/');
+  assert.equal(urls.normalizeRestorableUrl('file:///Users/a.txt'), 'file:///Users/a.txt');
+
+  for (const unsafeUrl of ['javascript:alert(1)', 'data:text/html,hi', 'chrome://extensions', 'about:blank', '', 'not a url']) {
+    assert.equal(urls.isRestorableUrl(unsafeUrl), false, unsafeUrl);
+    assert.equal(urls.normalizeRestorableUrl(unsafeUrl), '', unsafeUrl);
+  }
 }
 
 async function testTabsService() {
@@ -90,15 +104,17 @@ async function testTabsService() {
   assert.deepEqual(tabs.normalizeSessionRestoreTabs({
     tabs: [
       { url: 'https://w1-0.test', windowId: 1, index: 0 },
+      { url: 'javascript:alert(1)', windowId: 1, index: 99 },
       { url: 'https://w1-1.test', windowId: 1, index: 1 },
+      { url: 'data:text/html,hi', windowId: 2, index: 99 },
       { url: 'https://w2-0.test', windowId: 2, index: 0 },
       { url: 'https://w2-1.test', windowId: 2, index: 1 },
     ],
   }).map(tab => tab.url), [
-    'https://w1-0.test',
-    'https://w1-1.test',
-    'https://w2-0.test',
-    'https://w2-1.test',
+    'https://w1-0.test/',
+    'https://w1-1.test/',
+    'https://w2-0.test/',
+    'https://w2-1.test/',
   ]);
 
   const createdWindows = [];
@@ -191,6 +207,8 @@ async function testStorageService() {
   const fakeStorage = makeFakeStorage({
     deferred: [
       { url: 'https://a.test', title: 'A' },
+      { url: 'javascript:alert(1)', title: 'Bad' },
+      { url: 'file:///Users/local-note.txt', title: 'Local note' },
       { title: 'Missing URL' },
     ],
     viewMode: 'bad',
@@ -210,6 +228,20 @@ async function testStorageService() {
             groupTitle: 'Extensions',
             groupColor: 'cyan',
           },
+          {
+            title: 'Unsafe',
+            url: 'javascript:alert(1)',
+            windowId: 1,
+            index: 4,
+          },
+          {
+            title: 'Local notes',
+            url: 'file:///Users/local-notes.md',
+            windowId: 1,
+            index: 5,
+            groupTitle: 'Extensions',
+            groupColor: 'cyan',
+          },
         ],
       },
     ],
@@ -219,7 +251,7 @@ async function testStorageService() {
   const migration = await storage.migrateStorage();
   assert.equal(migration.changed, true);
   assert.equal(fakeStorage.store.storageSchemaVersion, storage.CURRENT_SCHEMA_VERSION);
-  assert.equal(fakeStorage.store.deferred.length, 1);
+  assert.equal(fakeStorage.store.deferred.length, 2);
   assert.equal(fakeStorage.store.savedSessions.length, 1);
   assert.equal(fakeStorage.store.viewMode, 'group');
   assert.deepEqual(fakeStorage.store.privacySettings, {
@@ -231,22 +263,29 @@ async function testStorageService() {
   });
 
   await storage.addDeferredTab({ url: 'https://b.test', title: 'B' });
+  assert.equal(await storage.addDeferredTab({ url: 'data:text/html,hi', title: 'Bad' }), false);
   const saved = await storage.getSavedTabs();
-  assert.equal(saved.active.length, 2);
+  assert.equal(saved.active.length, 3);
+  assert.equal(saved.active.some(tab => tab.url === 'file:///Users/local-note.txt'), true);
+  assert.equal(saved.active.some(tab => tab.url.startsWith('javascript:')), false);
   await storage.updateDeferredTab(saved.active[0].id, { completed: true, completedAt: '2026-04-30T00:00:00.000Z' });
   const afterUpdate = await storage.getSavedTabs();
   assert.equal(afterUpdate.archived.length, 1);
   assert.equal(await storage.clearArchivedDeferredTabs(), 1);
   const afterArchiveClear = await storage.getSavedTabs();
   assert.equal(afterArchiveClear.archived.length, 0);
-  assert.equal(afterArchiveClear.active.length, 1);
+  assert.equal(afterArchiveClear.active.length, 2);
   const storedSession = (await storage.getSavedSessions())[0];
   assert.equal(storedSession.name, 'MV3 research');
   assert.equal(storedSession.groupColor, 'cyan');
   assert.equal(storedSession.tabs[0].groupColor, 'cyan');
   assert.equal(storedSession.tabs[0].index, 3);
+  assert.equal(storedSession.tabs.length, 2);
+  assert.equal(storedSession.tabs.some(tab => tab.url === 'file:///Users/local-notes.md'), true);
+  assert.equal(storedSession.tabs.some(tab => tab.url.startsWith('javascript:')), false);
   await storage.addSavedSession({ name: 'Focus set', urls: ['https://focus.test'] });
   assert.equal((await storage.getSavedSessions())[0].name, 'Focus set');
+  assert.equal(await storage.addSavedSession({ name: 'Unsafe set', urls: ['chrome://extensions'] }), false);
   assert.equal(await storage.removeSavedSession('session-1'), true);
   assert.equal((await storage.getSavedSessions()).some(session => session.id === 'session-1'), false);
   const stats = await storage.recordActivity({ type: 'closed', count: 3, domain: 'example.com' });
@@ -402,6 +441,7 @@ async function testToolsService() {
   assert.equal((await tools.getToolState('json')).output, 'ok');
 }
 
+testUrlService();
 await testTabsService();
 await testStorageService();
 testSearchService();

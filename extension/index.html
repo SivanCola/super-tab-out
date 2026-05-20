@@ -24,7 +24,6 @@
     <div class="header-left">
       <div class="brand-cluster">
         <div class="brand-copy">
-          <div class="brand-name">Super Tab Out</div>
           <!-- "Good afternoon" — written by getGreeting() in app.js -->
           <h1 id="greeting"></h1>
           <!-- "Friday, April 4, 2026" — written by getDateDisplay() in app.js -->
@@ -42,158 +41,215 @@
           <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
         </svg>
       </button>
-      <!-- Language toggle — switches every fixed UI label between English and Chinese. -->
-      <div class="language-switcher" id="languageSwitcher" role="radiogroup" aria-label="Language">
-        <button class="language-btn" data-action="set-language" data-language="en"
-                role="radio" aria-pressed="false" title="English">EN</button>
-        <button class="language-btn" data-action="set-language" data-language="zh"
-                role="radio" aria-pressed="false" title="中文">中</button>
-      </div>
-      <!-- Theme picker — compact current theme button opens a larger palette grid. -->
-      <div class="theme-picker" id="themePicker">
-        <button class="theme-current-btn" id="themeCurrentBtn" data-action="toggle-theme-menu"
-                aria-haspopup="true" aria-expanded="false" title="Theme">
-          <span class="theme-swatch theme-swatch-active theme-swatch-system" id="activeThemeSwatch"></span>
-          <span class="theme-current-label" id="activeThemeLabel">Adaptive Glow</span>
-          <svg class="theme-current-chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+      <!-- Language picker — low-frequency setting kept as a compact current-language menu. -->
+      <div class="language-switcher" id="languageSwitcher" aria-label="Language">
+        <button class="language-current-btn" id="languageCurrentBtn" data-action="toggle-language-menu"
+                aria-haspopup="true" aria-expanded="false" title="Language">
+          <span class="language-current-label" id="activeLanguageLabel">EN</span>
+          <svg class="language-current-chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
           </svg>
         </button>
-        <div class="theme-menu" id="themeMenu" role="radiogroup" aria-label="Theme">
-          <button class="theme-option" data-action="set-theme" data-theme-name="system" role="radio" aria-pressed="false">
-            <span class="theme-swatch theme-swatch-system"></span><span class="theme-option-label">Adaptive Glow</span>
+        <div class="language-menu" id="languageMenu" role="radiogroup" aria-label="Language">
+          <button class="language-option" data-action="set-language" data-language="en" role="radio" aria-pressed="false" title="English">
+            <span class="language-option-label">English</span>
+            <span class="language-option-code">EN</span>
           </button>
-          <button class="theme-option" data-action="set-theme" data-theme-name="white" role="radio" aria-pressed="false">
-            <span class="theme-swatch theme-swatch-white"></span><span class="theme-option-label">Ivory Page</span>
-          </button>
-          <button class="theme-option" data-action="set-theme" data-theme-name="material" role="radio" aria-pressed="false">
-            <span class="theme-swatch theme-swatch-material"></span><span class="theme-option-label">Material Orbit</span>
-          </button>
-          <button class="theme-option" data-action="set-theme" data-theme-name="cupertino" role="radio" aria-pressed="false">
-            <span class="theme-swatch theme-swatch-cupertino"></span><span class="theme-option-label">Cupertino Mist</span>
-          </button>
-          <button class="theme-option" data-action="set-theme" data-theme-name="warm" role="radio" aria-pressed="false">
-            <span class="theme-swatch theme-swatch-warm"></span><span class="theme-option-label">Warm Parchment</span>
-          </button>
-          <button class="theme-option" data-action="set-theme" data-theme-name="midnight" role="radio" aria-pressed="false">
-            <span class="theme-swatch theme-swatch-midnight"></span><span class="theme-option-label">Midnight Voyage</span>
-          </button>
-          <button class="theme-option" data-action="set-theme" data-theme-name="arctic" role="radio" aria-pressed="false">
-            <span class="theme-swatch theme-swatch-arctic"></span><span class="theme-option-label">Frost Field</span>
-          </button>
-          <button class="theme-option" data-action="set-theme" data-theme-name="forest" role="radio" aria-pressed="false">
-            <span class="theme-swatch theme-swatch-forest"></span><span class="theme-option-label">Forest Isle</span>
-          </button>
-          <button class="theme-option" data-action="set-theme" data-theme-name="graphite" role="radio" aria-pressed="false">
-            <span class="theme-swatch theme-swatch-graphite"></span><span class="theme-option-label">Graphite Gold</span>
-          </button>
-          <button class="theme-option" data-action="set-theme" data-theme-name="coast" role="radio" aria-pressed="false">
-            <span class="theme-swatch theme-swatch-coast"></span><span class="theme-option-label">Coral Tide</span>
-          </button>
-          <button class="theme-option" data-action="set-theme" data-theme-name="plum" role="radio" aria-pressed="false">
-            <span class="theme-swatch theme-swatch-plum"></span><span class="theme-option-label">Plum Shade</span>
-          </button>
-          <button class="theme-option" data-action="set-theme" data-theme-name="matcha" role="radio" aria-pressed="false">
-            <span class="theme-swatch theme-swatch-matcha"></span><span class="theme-option-label">Matcha Haze</span>
-          </button>
-          <button class="theme-option" data-action="set-theme" data-theme-name="ember" role="radio" aria-pressed="false">
-            <span class="theme-swatch theme-swatch-ember"></span><span class="theme-option-label">Ember Slate</span>
-          </button>
-          <button class="theme-option" data-action="set-theme" data-theme-name="lavender" role="radio" aria-pressed="false">
-            <span class="theme-swatch theme-swatch-lavender"></span><span class="theme-option-label">Lavender Breeze</span>
+          <button class="language-option" data-action="set-language" data-language="zh" role="radio" aria-pressed="false" title="中文">
+            <span class="language-option-label">中文</span>
+            <span class="language-option-code">中</span>
           </button>
         </div>
       </div>
-      <!-- Font picker — system-font-only presets for readability and density. -->
-      <div class="font-picker" id="fontPicker">
-        <button class="font-current-btn" id="fontCurrentBtn" data-action="toggle-font-menu"
-                aria-haspopup="true" aria-expanded="false" title="Typography">
-          <span class="font-current-mark" aria-hidden="true">Aa</span>
-          <span class="font-current-label" id="activeFontLabel">Text</span>
-          <svg class="font-current-chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
-          </svg>
-        </button>
-        <div class="font-menu" id="fontMenu" role="group" aria-label="Typography">
-          <button class="font-option" data-action="set-font-preset" data-font-preset="system" role="radio" aria-checked="false" aria-pressed="false">
-            <span class="font-sample" aria-hidden="true">Aa</span>
-            <span class="font-option-copy">
-              <span class="font-option-label">System</span>
-              <span class="font-option-desc">Native UI font</span>
-            </span>
+
+      <div class="appearance-group" aria-label="Appearance">
+        <!-- Theme picker — compact current theme button opens a larger palette grid. -->
+        <div class="theme-picker" id="themePicker">
+          <button class="theme-current-btn" id="themeCurrentBtn" data-action="toggle-theme-menu"
+                  aria-haspopup="true" aria-expanded="false" title="Theme">
+            <span class="theme-swatch theme-swatch-active theme-swatch-system" id="activeThemeSwatch"></span>
+            <span class="theme-current-label" id="activeThemeLabel">Adaptive Glow</span>
+            <svg class="theme-current-chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+            </svg>
           </button>
-          <button class="font-option" data-action="set-font-preset" data-font-preset="readable" role="radio" aria-checked="false" aria-pressed="false">
-            <span class="font-sample font-sample-readable" aria-hidden="true">Aa</span>
-            <span class="font-option-copy">
-              <span class="font-option-label">Readable</span>
-              <span class="font-option-desc">Larger, looser rows</span>
-            </span>
+          <div class="theme-menu" id="themeMenu" role="radiogroup" aria-label="Theme">
+            <button class="theme-option" data-action="set-theme" data-theme-name="system" role="radio" aria-pressed="false">
+              <span class="theme-swatch theme-swatch-system"></span><span class="theme-option-label">Adaptive Glow</span>
+            </button>
+            <button class="theme-option" data-action="set-theme" data-theme-name="white" role="radio" aria-pressed="false">
+              <span class="theme-swatch theme-swatch-white"></span><span class="theme-option-label">Ivory Page</span>
+            </button>
+            <button class="theme-option" data-action="set-theme" data-theme-name="material" role="radio" aria-pressed="false">
+              <span class="theme-swatch theme-swatch-material"></span><span class="theme-option-label">Material Orbit</span>
+            </button>
+            <button class="theme-option" data-action="set-theme" data-theme-name="cupertino" role="radio" aria-pressed="false">
+              <span class="theme-swatch theme-swatch-cupertino"></span><span class="theme-option-label">Cupertino Mist</span>
+            </button>
+            <button class="theme-option" data-action="set-theme" data-theme-name="warm" role="radio" aria-pressed="false">
+              <span class="theme-swatch theme-swatch-warm"></span><span class="theme-option-label">Warm Parchment</span>
+            </button>
+            <button class="theme-option" data-action="set-theme" data-theme-name="midnight" role="radio" aria-pressed="false">
+              <span class="theme-swatch theme-swatch-midnight"></span><span class="theme-option-label">Midnight Voyage</span>
+            </button>
+            <button class="theme-option" data-action="set-theme" data-theme-name="arctic" role="radio" aria-pressed="false">
+              <span class="theme-swatch theme-swatch-arctic"></span><span class="theme-option-label">Frost Field</span>
+            </button>
+            <button class="theme-option" data-action="set-theme" data-theme-name="forest" role="radio" aria-pressed="false">
+              <span class="theme-swatch theme-swatch-forest"></span><span class="theme-option-label">Forest Isle</span>
+            </button>
+            <button class="theme-option" data-action="set-theme" data-theme-name="graphite" role="radio" aria-pressed="false">
+              <span class="theme-swatch theme-swatch-graphite"></span><span class="theme-option-label">Graphite Gold</span>
+            </button>
+            <button class="theme-option" data-action="set-theme" data-theme-name="coast" role="radio" aria-pressed="false">
+              <span class="theme-swatch theme-swatch-coast"></span><span class="theme-option-label">Coral Tide</span>
+            </button>
+            <button class="theme-option" data-action="set-theme" data-theme-name="plum" role="radio" aria-pressed="false">
+              <span class="theme-swatch theme-swatch-plum"></span><span class="theme-option-label">Plum Shade</span>
+            </button>
+            <button class="theme-option" data-action="set-theme" data-theme-name="matcha" role="radio" aria-pressed="false">
+              <span class="theme-swatch theme-swatch-matcha"></span><span class="theme-option-label">Matcha Haze</span>
+            </button>
+            <button class="theme-option" data-action="set-theme" data-theme-name="ember" role="radio" aria-pressed="false">
+              <span class="theme-swatch theme-swatch-ember"></span><span class="theme-option-label">Ember Slate</span>
+            </button>
+            <button class="theme-option" data-action="set-theme" data-theme-name="lavender" role="radio" aria-pressed="false">
+              <span class="theme-swatch theme-swatch-lavender"></span><span class="theme-option-label">Lavender Breeze</span>
+            </button>
+          </div>
+        </div>
+        <!-- Font picker — system-font-only presets for readability and density. -->
+        <div class="font-picker" id="fontPicker">
+          <button class="font-current-btn" id="fontCurrentBtn" data-action="toggle-font-menu"
+                  aria-haspopup="true" aria-expanded="false" title="Typography">
+            <span class="font-current-mark" aria-hidden="true">Aa</span>
+            <span class="font-current-label" id="activeFontLabel">Type</span>
+            <svg class="font-current-chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+            </svg>
           </button>
-          <button class="font-option" data-action="set-font-preset" data-font-preset="compact" role="radio" aria-checked="false" aria-pressed="false">
-            <span class="font-sample font-sample-compact" aria-hidden="true">Aa</span>
-            <span class="font-option-copy">
-              <span class="font-option-label">Compact</span>
-              <span class="font-option-desc">More tabs per screen</span>
-            </span>
-          </button>
-          <button class="font-option" data-action="set-font-preset" data-font-preset="editorial" role="radio" aria-checked="false" aria-pressed="false">
-            <span class="font-sample font-sample-editorial" aria-hidden="true">Aa</span>
-            <span class="font-option-copy">
-              <span class="font-option-label">Editorial</span>
-              <span class="font-option-desc">Serif-led headings</span>
-            </span>
-          </button>
-          <div class="font-size-controls" role="group" aria-label="Size by area">
-            <div class="font-size-title" data-font-copy="fontSizeByArea">Size by area</div>
-            <div class="font-size-row">
-              <span class="font-size-area" data-font-copy="fontSizeHeader">Header</span>
-              <div class="font-size-segment" role="group" aria-label="Header size">
-                <button class="font-size-option" data-action="set-font-size" data-font-size-area="header" data-font-size-value="small" aria-pressed="false" title="Small">S</button>
-                <button class="font-size-option" data-action="set-font-size" data-font-size-area="header" data-font-size-value="default" aria-pressed="true" title="Default">M</button>
-                <button class="font-size-option" data-action="set-font-size" data-font-size-area="header" data-font-size-value="large" aria-pressed="false" title="Large">L</button>
+          <div class="font-menu" id="fontMenu" role="group" aria-label="Typography">
+            <button class="font-option" data-action="set-font-preset" data-font-preset="system" role="radio" aria-checked="false" aria-pressed="false">
+              <span class="font-sample" aria-hidden="true">Aa</span>
+              <span class="font-option-copy">
+                <span class="font-option-label">System</span>
+                <span class="font-option-desc">Native UI font</span>
+              </span>
+            </button>
+            <button class="font-option" data-action="set-font-preset" data-font-preset="readable" role="radio" aria-checked="false" aria-pressed="false">
+              <span class="font-sample font-sample-readable" aria-hidden="true">Aa</span>
+              <span class="font-option-copy">
+                <span class="font-option-label">Readable</span>
+                <span class="font-option-desc">Larger, looser rows</span>
+              </span>
+            </button>
+            <button class="font-option" data-action="set-font-preset" data-font-preset="compact" role="radio" aria-checked="false" aria-pressed="false">
+              <span class="font-sample font-sample-compact" aria-hidden="true">Aa</span>
+              <span class="font-option-copy">
+                <span class="font-option-label">Compact</span>
+                <span class="font-option-desc">More tabs per screen</span>
+              </span>
+            </button>
+            <button class="font-option" data-action="set-font-preset" data-font-preset="editorial" role="radio" aria-checked="false" aria-pressed="false">
+              <span class="font-sample font-sample-editorial" aria-hidden="true">Aa</span>
+              <span class="font-option-copy">
+                <span class="font-option-label">Editorial</span>
+                <span class="font-option-desc">Serif-led headings</span>
+              </span>
+            </button>
+            <div class="font-size-controls" role="group" aria-label="Size by area">
+              <div class="font-size-title" data-font-copy="fontSizeByArea">Size by area</div>
+              <div class="font-size-row">
+                <span class="font-size-area" data-font-copy="fontSizeHeader">Header</span>
+                <div class="font-size-segment" role="group" aria-label="Header size">
+                  <button class="font-size-option" data-action="set-font-size" data-font-size-area="header" data-font-size-value="small" aria-pressed="false" title="Small">S</button>
+                  <button class="font-size-option" data-action="set-font-size" data-font-size-area="header" data-font-size-value="default" aria-pressed="true" title="Default">M</button>
+                  <button class="font-size-option" data-action="set-font-size" data-font-size-area="header" data-font-size-value="large" aria-pressed="false" title="Large">L</button>
+                </div>
               </div>
-            </div>
-            <div class="font-size-row">
-              <span class="font-size-area" data-font-copy="fontSizeCards">Cards</span>
-              <div class="font-size-segment" role="group" aria-label="Card title size">
-                <button class="font-size-option" data-action="set-font-size" data-font-size-area="cards" data-font-size-value="small" aria-pressed="false" title="Small">S</button>
-                <button class="font-size-option" data-action="set-font-size" data-font-size-area="cards" data-font-size-value="default" aria-pressed="true" title="Default">M</button>
-                <button class="font-size-option" data-action="set-font-size" data-font-size-area="cards" data-font-size-value="large" aria-pressed="false" title="Large">L</button>
+              <div class="font-size-row">
+                <span class="font-size-area" data-font-copy="fontSizeCards">Cards</span>
+                <div class="font-size-segment" role="group" aria-label="Card title size">
+                  <button class="font-size-option" data-action="set-font-size" data-font-size-area="cards" data-font-size-value="small" aria-pressed="false" title="Small">S</button>
+                  <button class="font-size-option" data-action="set-font-size" data-font-size-area="cards" data-font-size-value="default" aria-pressed="true" title="Default">M</button>
+                  <button class="font-size-option" data-action="set-font-size" data-font-size-area="cards" data-font-size-value="large" aria-pressed="false" title="Large">L</button>
+                </div>
               </div>
-            </div>
-            <div class="font-size-row">
-              <span class="font-size-area" data-font-copy="fontSizeTabs">Tab rows</span>
-              <div class="font-size-segment" role="group" aria-label="Tab row size">
-                <button class="font-size-option" data-action="set-font-size" data-font-size-area="tabs" data-font-size-value="small" aria-pressed="false" title="Small">S</button>
-                <button class="font-size-option" data-action="set-font-size" data-font-size-area="tabs" data-font-size-value="default" aria-pressed="true" title="Default">M</button>
-                <button class="font-size-option" data-action="set-font-size" data-font-size-area="tabs" data-font-size-value="large" aria-pressed="false" title="Large">L</button>
+              <div class="font-size-row">
+                <span class="font-size-area" data-font-copy="fontSizeTabs">Tab rows</span>
+                <div class="font-size-segment" role="group" aria-label="Tab row size">
+                  <button class="font-size-option" data-action="set-font-size" data-font-size-area="tabs" data-font-size-value="small" aria-pressed="false" title="Small">S</button>
+                  <button class="font-size-option" data-action="set-font-size" data-font-size-area="tabs" data-font-size-value="default" aria-pressed="true" title="Default">M</button>
+                  <button class="font-size-option" data-action="set-font-size" data-font-size-area="tabs" data-font-size-value="large" aria-pressed="false" title="Large">L</button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <button class="privacy-settings-btn" id="privacySettingsBtn" title="Customize privacy screen" data-i18n-title="privacySettingsTitle" aria-label="Customize privacy screen" aria-haspopup="true" aria-expanded="false">
+      <button class="privacy-settings-btn" id="privacySettingsBtn" title="Settings" data-i18n-title="settingsTitle" aria-label="Settings" aria-haspopup="true" aria-expanded="false">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
         </svg>
       </button>
       <div class="privacy-settings" id="privacySettings" style="display:none">
-        <div class="privacy-settings-title" data-i18n="customize">Customize</div>
-        <label class="privacy-setting-row">
-          <input type="checkbox" id="psClock" checked> <span data-i18n="clock">Clock</span>
-        </label>
-        <label class="privacy-setting-row">
-          <input type="checkbox" id="psDate" checked> <span data-i18n="date">Date</span>
-        </label>
-        <label class="privacy-setting-row">
-          <input type="checkbox" id="psMotto" checked> <span data-i18n="customText">Custom text</span>
-        </label>
-        <label class="privacy-setting-row">
-          <input type="checkbox" id="psFavicons" checked> <span data-i18n="externalFavicons">Load site icons</span>
-        </label>
-        <div class="privacy-setting-sub" id="psMottoEdit">
-          <input type="text" id="psMottoInput" class="privacy-setting-input" placeholder="Type your text here..." data-i18n-placeholder="mottoPlaceholder">
+        <div class="privacy-settings-title" data-i18n="settingsTitle">Settings</div>
+        <div class="settings-tabs" role="tablist" aria-label="Settings sections" data-i18n-aria-label="settingsSectionsLabel">
+          <button class="settings-tab active" id="settingsTabAppearance" data-action="set-settings-view" data-settings-view="appearance" role="tab" aria-selected="true" aria-controls="settingsPaneAppearance" data-i18n="appearanceSettings">Appearance</button>
+          <button class="settings-tab" id="settingsTabPrivacy" data-action="set-settings-view" data-settings-view="privacy" role="tab" aria-selected="false" aria-controls="settingsPanePrivacy" data-i18n="privacyScreenSettings">Privacy screen</button>
+        </div>
+
+        <div class="settings-pane active" id="settingsPaneAppearance" data-settings-pane="appearance" role="tabpanel" aria-labelledby="settingsTabAppearance">
+          <div class="settings-section">
+            <div class="settings-field">
+              <div class="settings-field-label" data-i18n="languageLabel">Language</div>
+              <div class="settings-field-control" id="settingsLanguageSlot"></div>
+            </div>
+            <div class="settings-field">
+              <div class="settings-field-label" data-i18n="themeLabel">Theme</div>
+              <div class="settings-field-control" id="settingsThemeSlot"></div>
+            </div>
+            <div class="settings-field">
+              <div class="settings-field-label" data-i18n="fontLabel">Typography</div>
+              <div class="settings-field-control" id="settingsFontSlot"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-pane" id="settingsPanePrivacy" data-settings-pane="privacy" role="tabpanel" aria-labelledby="settingsTabPrivacy">
+          <div class="settings-section-title" data-i18n="privacyScreenSettings">Privacy screen</div>
+          <label class="privacy-setting-row">
+            <span data-i18n="clock">Clock</span>
+            <span class="privacy-setting-switch">
+              <input type="checkbox" id="psClock" checked>
+              <span class="privacy-setting-switch-track" aria-hidden="true"></span>
+            </span>
+          </label>
+          <label class="privacy-setting-row">
+            <span data-i18n="date">Date</span>
+            <span class="privacy-setting-switch">
+              <input type="checkbox" id="psDate" checked>
+              <span class="privacy-setting-switch-track" aria-hidden="true"></span>
+            </span>
+          </label>
+          <label class="privacy-setting-row">
+            <span data-i18n="customText">Custom text</span>
+            <span class="privacy-setting-switch">
+              <input type="checkbox" id="psMotto" checked>
+              <span class="privacy-setting-switch-track" aria-hidden="true"></span>
+            </span>
+          </label>
+          <label class="privacy-setting-row">
+            <span data-i18n="externalFavicons">Load site icons</span>
+            <span class="privacy-setting-switch">
+              <input type="checkbox" id="psFavicons" checked>
+              <span class="privacy-setting-switch-track" aria-hidden="true"></span>
+            </span>
+          </label>
+          <div class="privacy-setting-sub" id="psMottoEdit">
+            <input type="text" id="psMottoInput" class="privacy-setting-input" placeholder="Type your text here..." data-i18n-placeholder="mottoPlaceholder">
+          </div>
         </div>
       </div>
     </div>
@@ -326,6 +382,7 @@
     <div class="project-credit">
       <div class="project-credit-primary">
         <a href="https://github.com/SivanCola/super-tab-out" target="_top">Super Tab Out</a>
+        <span class="project-version" id="extensionVersion" hidden></span>
       </div>
       <div class="project-credit-attribution" data-i18n-html="creditAttribution">
         Apache-2.0 &middot; Based on
@@ -399,6 +456,7 @@
 <script src="config.local.js"></script>
 
 <!-- Shared services — classic scripts keep the no-build MV3 setup intact. -->
+<script src="services/url-service.js"></script>
 <script src="services/html-service.js"></script>
 <script src="services/storage-service.js"></script>
 <script src="services/tabs-service.js"></script>

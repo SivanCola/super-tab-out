@@ -21,6 +21,7 @@ const REQUIRED_ZIP_ENTRIES = [
   'tools.html',
   'tools.css',
   'tools.js',
+  'services/url-service.js',
   'services/html-service.js',
   'services/storage-service.js',
   'services/tabs-service.js',
@@ -126,6 +127,7 @@ function checkHtmlScripts(htmlFile, expectedScripts = []) {
 
 function checkIndexScripts() {
   checkHtmlScripts('index.html', [
+    'services/url-service.js',
     'services/html-service.js',
     'services/storage-service.js',
     'services/tabs-service.js',
@@ -134,12 +136,14 @@ function checkIndexScripts() {
     'services/tools-service.js',
   ]);
   checkHtmlScripts('sidepanel.html', [
+    'services/url-service.js',
     'services/storage-service.js',
     'services/tabs-service.js',
     'services/search-service.js',
     'services/tools-service.js',
   ]);
   checkHtmlScripts('tools.html', [
+    'services/url-service.js',
     'services/storage-service.js',
     'services/tabs-service.js',
     'vendor/qrcodegen.js',

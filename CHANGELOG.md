@@ -6,6 +6,24 @@ All notable changes to Super Tab Out are tracked here.
 
 ## Unreleased
 
+## 1.0.9 - 2026-05-20
+
+### Changed
+
+- Bumped the extension and package metadata to `1.0.9` and regenerated local Chrome/Edge store upload packages.
+- Updated README release notes for the toolbar Tools entry, lightweight Settings panel, and the current 14-theme set.
+
+### Fixed
+
+- Kept the Settings panel inside the viewport on narrow screens and made Escape blur focused settings/search inputs before closing panels.
+- Centralized restorable URL validation so saved tabs, saved sessions, restores, and stored URL opens only allow `http:`, `https:`, and `file:` URLs.
+
+## 1.0.8 - 2026-05-16
+
+### Changed
+
+- Bumped the extension and package metadata to `1.0.8` for the next Chrome/Edge store upload.
+
 ## 1.0.7 - 2026-05-14
 
 ### Changed
