@@ -7,7 +7,7 @@
 <h3>The Local-First New Tab Dashboard for Chrome, Edge & Brave</h3>
 
 <p>
-  <img alt="version v1.0.9" src="https://img.shields.io/badge/version-v1.0.9-2388d9?labelColor=555555">
+  <img alt="version v1.0.10" src="https://img.shields.io/badge/version-v1.0.10-2388d9?labelColor=555555">
   <img alt="platform Chrome Edge Brave" src="https://img.shields.io/badge/platform-Chrome%20%7C%20Edge%20%7C%20Brave-9a9a9a?labelColor=555555">
   <img alt="built with MV3 and Vanilla JS" src="https://img.shields.io/badge/built%20with-MV3%20%2B%20Vanilla%20JS-ff7a3d?labelColor=555555">
   <img alt="license Apache 2.0" src="https://img.shields.io/badge/license-Apache--2.0-35c52a?labelColor=555555">

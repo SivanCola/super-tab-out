@@ -1615,7 +1615,7 @@ function isSafeNavUrl(url) {
    ---------------------------------------------------------------- */
 const FAVICON_CACHE_PREFIX = 'favicon:';
 const FAVICON_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
-let externalFaviconsEnabled = true;
+let externalFaviconsEnabled = false;
 
 function readCachedFavicon(domain) {
   if (!domain) return null;
@@ -2994,6 +2994,7 @@ async function renderDashboardMetrics(realTabs = getRealTabs()) {
 }
 
 async function renderDashboard() {
+  await storageAndPrivacyReady;
   await renderStaticDashboard();
 }
 
@@ -3978,7 +3979,7 @@ document.addEventListener('load', (e) => {
    PRIVACY MODE — hide dashboard content during screen sharing
 
    Toggled by the lock icon in the header or by Esc. State is stored in
-   chrome.storage.local so it survives new tabs. initPrivacyMode() runs
+   chrome.storage.local so it survives new tabs. initPrivacy() runs
    before the first render so the dashboard never flashes into view when
    a locked session is reopened.
    ---------------------------------------------------------------- */
@@ -3995,10 +3996,14 @@ async function getPrivacyMode() {
 
 async function getPrivacySettings() {
   try {
-    if (StorageService?.getPrivacySettings) return await StorageService.getPrivacySettings();
-    const { privacySettings } = await chrome.storage.local.get('privacySettings');
-    return { ...PRIVACY_DEFAULTS, ...privacySettings };
-  } catch { return { ...PRIVACY_DEFAULTS }; }
+    const storage = globalThis.chrome?.storage?.local;
+    if (storage) {
+      if (StorageService?.getPrivacySettings) return await StorageService.getPrivacySettings();
+      const { privacySettings } = await storage.get('privacySettings');
+      return { ...PRIVACY_DEFAULTS, ...privacySettings };
+    }
+  } catch {}
+  return { ...PRIVACY_DEFAULTS, externalFavicons: false };
 }
 
 async function savePrivacySettings(settings) {
@@ -4124,9 +4129,9 @@ async function applyPrivacyWidgets() {
   if (mottoInput) mottoInput.value = s.mottoText || '';
   const mottoEdit = document.getElementById('psMottoEdit');
   if (mottoEdit) mottoEdit.style.display = s.motto ? '' : 'none';
-  const faviconCb = document.getElementById('psFavicons');
-  if (faviconCb) faviconCb.checked = s.externalFavicons !== false;
   externalFaviconsEnabled = s.externalFavicons !== false;
+  const faviconCb = document.getElementById('psFavicons');
+  if (faviconCb) faviconCb.checked = externalFaviconsEnabled;
 }
 
 let privacyClockInterval = null;
@@ -4310,13 +4315,11 @@ if (_privacyMottoInput) {
   });
 }
 
-async function initPrivacyMode() {
+async function initPrivacy() {
   const enabled = await getPrivacyMode();
-  if (enabled) {
-    document.body.classList.add('privacy-mode');
-    await applyPrivacyWidgets();
-    startPrivacyClock();
-  }
+  if (enabled) document.body.classList.add('privacy-mode');
+  await applyPrivacyWidgets();
+  if (enabled) startPrivacyClock();
 }
 
 
@@ -4395,16 +4398,19 @@ loadExtensionVersion();
 initStorageErrorToasts();
 cleanExpiredFavicons();
 
-async function initApp() {
+async function initStorageAndPrivacy() {
   try {
     await StorageService?.migrateStorage?.();
   } catch (err) {
     console.warn('[tab-out] Storage migration failed:', err);
   }
 
-  // initPrivacyMode runs first so a locked session never flashes the
-  // dashboard into view before the body.privacy-mode class lands.
-  await initPrivacyMode();
+  await initPrivacy();
+}
+
+const storageAndPrivacyReady = initStorageAndPrivacy();
+
+async function initApp() {
   await renderDashboard();
   _initialRenderDone = true;
 }

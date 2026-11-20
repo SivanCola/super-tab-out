@@ -182,6 +182,83 @@ async function removeStorage(page, keys) {
   await page.evaluate(`new Promise(resolve => chrome.storage.local.remove(${json}, resolve))`);
 }
 
+async function testFaviconPrivacy(port) {
+  const fixtureUrl = 'https://favicon-regression.test/sample';
+  const iconService = 'https://icons.duckduckgo.com/';
+  const fixtureIcon = `${iconService}ip3/favicon-regression.test.ico`;
+  const pages = [];
+
+  async function openMonitoredNewTab({ failSettingsRead = false } = {}) {
+    const page = await openExtensionPage(port, 'about:blank');
+    pages.push(page);
+    const requests = [];
+    page.on('Network.requestWillBeSent', ({ request }) => {
+      if (request.url.startsWith(iconService)) requests.push(request.url);
+    });
+    await page.send('Network.enable');
+    await page.send('Network.setCacheDisabled', { cacheDisabled: true });
+    if (failSettingsRead) {
+      await page.send('Page.addScriptToEvaluateOnNewDocument', { source: `
+        Object.defineProperty(window, 'SuperTabOutStorage', {
+          configurable: true,
+          set(service) {
+            service.getPrivacySettings = async () => {
+              window.privacySettingsReadFailed = true;
+              throw new Error('Simulated privacy settings read failure');
+            };
+            Object.defineProperty(window, 'SuperTabOutStorage', { value: service, configurable: true });
+          }
+        });
+      ` });
+    }
+    await page.navigate('chrome://newtab/');
+    await page.waitFor(`_initialRenderDone && document.querySelector('[data-tab-url="${fixtureUrl}"]')`);
+    assert.equal(await page.evaluate(`document.body.classList.contains('privacy-mode')`), false);
+    return { page, requests };
+  }
+
+  try {
+    const fixture = await openExtensionPage(port, 'about:blank');
+    pages.push(fixture);
+    fixture.on('Fetch.requestPaused', ({ requestId }) => {
+      void fixture.send('Fetch.fulfillRequest', {
+        requestId,
+        responseCode: 200,
+        responseHeaders: [{ name: 'Content-Type', value: 'text/html' }],
+        body: Buffer.from('<title>Favicon regression fixture</title>').toString('base64'),
+      });
+    });
+    await fixture.send('Fetch.enable', { patterns: [{ urlPattern: fixtureUrl, resourceType: 'Document' }] });
+    await fixture.navigate(fixtureUrl);
+    await fixture.waitFor(`document.title === 'Favicon regression fixture'`);
+
+    const enabled = await openMonitoredNewTab();
+    assert.ok(enabled.requests.includes(fixtureIcon), 'Network monitor must see the icon request when enabled');
+    await enabled.page.evaluate(`
+      document.querySelector('#privacySettingsBtn').click();
+      document.querySelector('#settingsTabPrivacy').click();
+      document.querySelector('#psFavicons').click();
+    `);
+    await enabled.page.waitFor(`(async () => {
+      const { privacySettings } = await chrome.storage.local.get('privacySettings');
+      return privacySettings?.externalFavicons === false;
+    })()`);
+
+    const disabled = await openMonitoredNewTab();
+    assert.deepEqual(disabled.requests, [], 'A new tab must honor the saved icon opt-out');
+    assert.equal(await disabled.page.evaluate(`document.querySelector('#psFavicons').checked`), false);
+
+    await setStorage(enabled.page, { privacySettings: { externalFavicons: true } });
+    const unreadable = await openMonitoredNewTab({ failSettingsRead: true });
+    assert.equal(await unreadable.page.evaluate('window.privacySettingsReadFailed'), true);
+    assert.deepEqual(unreadable.requests, [], 'A settings read failure must block external icons');
+    assert.equal(await unreadable.page.evaluate(`document.querySelector('#psFavicons').checked`), false);
+    console.log('Chrome favicon privacy regression passed.');
+  } finally {
+    for (const page of pages) page.close();
+  }
+}
+
 async function main() {
   const port = await freePort();
   const profile = await mkdtemp(join(tmpdir(), 'super-tab-out-chrome-tools-'));
@@ -195,6 +272,8 @@ async function main() {
     '--disable-component-update',
     '--disable-default-apps',
     '--disable-sync',
+    '--no-proxy-server',
+    '--host-resolver-rules=MAP icons.duckduckgo.com ~NOTFOUND',
     '--metrics-recording-only',
     '--no-first-run',
     '--no-default-browser-check',
@@ -435,6 +514,7 @@ async function main() {
 
     assert.deepEqual(page.errors, []);
     console.log('Chrome tools regression passed.');
+    await testFaviconPrivacy(port);
   } finally {
     if (page) page.close();
     await stopChrome(chrome);

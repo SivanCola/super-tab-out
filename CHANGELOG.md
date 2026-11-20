@@ -6,6 +6,12 @@ All notable changes to Super Tab Out are tracked here.
 
 ## Unreleased
 
+## 1.0.10 - 2026-11-20
+
+### Fixed
+
+- New tabs honor the saved Load site icons setting even when privacy mode is off. If the setting cannot be read, the extension skips external icon requests.
+
 ## 1.0.9 - 2026-05-20
 
 ### Changed
